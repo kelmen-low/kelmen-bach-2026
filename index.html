@@ -13,7 +13,7 @@
     <!-- Visualization & Content Choices: 
          1. Custom CSS Icons: Created "badges" using Tailwind and Unicode for Genentech (G), UC Davis (UCD), Badminton (🏸), and Malaysia (🌙⭐ + Stripes) to avoid using prohibited SVGs.
          2. Squad Grid: Responsive layout for 9 cards.
-         3. Budget Donut: Chart.js visualization of the $1,050 goal.
+         3. Budget Donut: Chart.js visualization of the $950 goal (Lodging vs Spend). 
          4. Filterable Activity Grid: High-level grouping of tasks. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
@@ -86,11 +86,13 @@
             <div class="inline-flex flex-col bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
                 <span class="text-sm uppercase tracking-widest text-stone-400 font-bold mb-2">Countdown to Liftoff</span>
                 <div class="flex space-x-4 text-center justify-center">
-                    <div class="flex flex-col"><span id="cd-days" class="text-3xl font-bold text-amber-600">00</span><span class="text-xs text-stone-500">Days</span></div>
+                    <div class="flex flex-col"><span id="cd-days" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Days</span></div>
                     <div class="text-3xl font-bold text-stone-300">:</div>
-                    <div class="flex flex-col"><span id="cd-hours" class="text-3xl font-bold text-amber-600">00</span><span class="text-xs text-stone-500">Hours</span></div>
+                    <div class="flex flex-col"><span id="cd-hours" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Hrs</span></div>
                     <div class="text-3xl font-bold text-stone-300">:</div>
-                    <div class="flex flex-col"><span id="cd-mins" class="text-3xl font-bold text-amber-600">00</span><span class="text-xs text-stone-500">Mins</span></div>
+                    <div class="flex flex-col"><span id="cd-mins" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Mins</span></div>
+                    <div class="text-3xl font-bold text-stone-300">:</div>
+                    <div class="flex flex-col"><span id="cd-secs" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Secs</span></div>
                 </div>
             </div>
         </div>
@@ -174,17 +176,16 @@
             <div class="flex flex-col md:flex-row gap-12 items-center">
                 <div class="md:w-1/2">
                     <h2 class="text-3xl font-bold text-stone-900 mb-4">The Damage (Budget)</h2>
-                    <p class="text-stone-600 mb-6">Targeting ~$1,050 per person for the group of 9. This covers our premium Airbnb, food, adrenaline activities, and the extra wiggle room fund.</p>
+                    <p class="text-stone-600 mb-6">Targeting ~$950 per person for the group of 9. This covers our premium Airbnb, food, and high-energy adrenaline activities throughout the weekend.</p>
                     
                     <div class="bg-stone-100 p-6 rounded-xl border border-stone-200">
                         <div class="flex justify-between items-center mb-4 border-b border-stone-200 pb-4">
                             <span class="font-bold text-stone-700">Per Person Goal</span>
-                            <span class="text-2xl font-black text-amber-600">~$1,050 <span class="text-sm text-stone-500 font-normal">/person</span></span>
+                            <span class="text-2xl font-black text-amber-600">~$950 <span class="text-sm text-stone-500 font-normal">/person</span></span>
                         </div>
                         <ul class="space-y-3 text-sm">
                             <li class="flex justify-between"><span class="flex items-center">🏠 Lodging (Avg)</span> <span class="font-bold">$350</span></li>
                             <li class="flex justify-between"><span class="flex items-center">🍔 Spend (Food/Fun)</span> <span class="font-bold">$600</span></li>
-                            <li class="flex justify-between"><span class="flex items-center">🎁 RC Bonus Fund</span> <span class="font-bold">+$100</span></li>
                         </ul>
                     </div>
                 </div>
@@ -320,16 +321,19 @@
                 document.getElementById("cd-days").innerText = "00";
                 document.getElementById("cd-hours").innerText = "00";
                 document.getElementById("cd-mins").innerText = "00";
+                document.getElementById("cd-secs").innerText = "00";
                 return;
             }
 
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((distance % (1000 * 60)) / 1000);
 
             document.getElementById("cd-days").innerText = days.toString().padStart(2, '0');
             document.getElementById("cd-hours").innerText = hours.toString().padStart(2, '0');
             document.getElementById("cd-mins").innerText = minutes.toString().padStart(2, '0');
+            document.getElementById("cd-secs").innerText = seconds.toString().padStart(2, '0');
         }
         
         setInterval(updateCountdown, 1000);
@@ -339,10 +343,10 @@
         new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Lodging ($350)', 'Spend/Food ($600)', 'RC Fund ($100)'],
+                labels: ['Lodging ($350)', 'Spend/Food ($600)'],
                 datasets: [{
-                    data: [350, 600, 100],
-                    backgroundColor: ['#d97706', '#1f2937', '#10b981'],
+                    data: [350, 600],
+                    backgroundColor: ['#d97706', '#1f2937'],
                     borderWidth: 0,
                     hoverOffset: 4
                 }]
