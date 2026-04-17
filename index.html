@@ -9,12 +9,11 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     
     <!-- Chosen Palette: Warm Neutrals with Nature Accents (Stone, Goldenrod, Matcha Green, Espresso Brown) -->
-    <!-- Application Structure Plan: The SPA is a dashboard designed for a group of 9. It prioritizes the "Squad" section by adding unique visual identifiers (Genentech, UC Davis, Badminton, Malaysia) for each member to make the list feel personalized. The budget and activity pool follow to provide a full operational overview for the weekend. -->
+    <!-- Application Structure Plan: The SPA is a dashboard designed for a group of 9. It prioritizes the "Squad" section by adding interactive flipping cards. The front shows names and logos, while the back reveals roles and contact info. The budget and activity pool follow to provide a full operational overview. -->
     <!-- Visualization & Content Choices: 
-         1. Custom CSS Icons: Created "badges" using Tailwind and Unicode for Genentech (G), UC Davis (UCD), Badminton (🏸), and Malaysia (🌙⭐ + Stripes) to avoid using prohibited SVGs.
-         2. Squad Grid: Responsive layout for 9 cards.
-         3. Budget Donut: Chart.js visualization of the $950 goal (Lodging vs Spend). 
-         4. Filterable Activity Grid: High-level grouping of tasks. -->
+         1. Interactive Flip Cards: Built with CSS 3D transforms. Front side focuses on identity (Name/Logo), back side on utility (Role/Number).
+         2. Custom CSS Icons: Created "badges" using Tailwind and Unicode for Genentech (G), UC Davis (UCD), Badminton (🏸), and Malaysia (🌙⭐ + Stripes).
+         3. Budget Donut: Chart.js visualization of the $950 goal. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
     <style>
@@ -60,6 +59,22 @@
             font-size: 8px; color: #ffff00;
             display: flex; align-items: center; justify-content: center;
         }
+
+        /* Flip Card CSS */
+        .card-container { perspective: 1000px; cursor: pointer; height: 180px; }
+        .card-inner {
+            position: relative; width: 100%; height: 100%;
+            text-align: center; transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .card-inner.flipped { transform: rotateY(180deg); }
+        .card-front, .card-back {
+            position: absolute; width: 100%; height: 100%;
+            backface-visibility: hidden; -webkit-backface-visibility: hidden;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            border-radius: 0.75rem; border: 1px solid #e7e5e4;
+        }
+        .card-back { transform: rotateY(180deg); background-color: #fafaf9; }
     </style>
 </head>
 <body class="bg-[#faf9f6] text-stone-800 antialiased">
@@ -103,71 +118,142 @@
         <section id="squad" class="scroll-mt-24">
             <div class="mb-10 text-center md:text-left">
                 <h2 class="text-3xl font-bold text-stone-900 mb-4">The Squad (9 Total)</h2>
-                <p class="text-stone-600 max-w-2xl">The final lineup. Each member's card features their unique affiliation logo.</p>
+                <p class="text-stone-600 max-w-2xl">The final lineup. Click a card to reveal affiliation, role, and contact info.</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
                 <!-- Kelmen -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-amber-100 text-xl">👑</div>
-                    <h3 class="text-xl font-bold">Kelmen</h3>
-                    <p class="text-sm text-stone-500 mb-2">The Groom</p>
-                    <a href="tel:9256405618" class="text-amber-600 font-mono text-sm block">📱 (925) 640-5618</a>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-amber-100 text-xl">👑</div>
+                            <h3 class="text-xl font-bold">Kelmen</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back bg-amber-50 p-6">
+                            <p class="text-sm font-bold text-amber-800 mb-1">The Groom</p>
+                            <a href="tel:9256405618" class="text-amber-600 font-mono text-sm block">📱 (925) 640-5618</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- Shane Low -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-12 h-8 rounded shadow-sm mb-3 logo-malaysia"></div>
-                    <h3 class="text-xl font-bold">Shane Low</h3>
-                    <p class="text-sm text-stone-500 mb-2">Head Planner</p>
-                    <a href="tel:9252705245" class="text-amber-600 font-mono text-sm block">📱 (925) 270-5245</a>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-12 h-8 rounded shadow-sm mb-3 logo-malaysia"></div>
+                            <h3 class="text-xl font-bold">Shane Low</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Head Planner</p>
+                            <p class="text-xs text-stone-500 mb-2">Malaysia</p>
+                            <a href="tel:9252705245" class="text-amber-600 font-mono text-sm block">📱 (925) 270-5245</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- Kevin Low -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-12 h-8 rounded shadow-sm mb-3 logo-malaysia"></div>
-                    <h3 class="text-xl font-bold">Kevin Low</h3>
-                    <p class="text-sm text-stone-500 mb-2">Brother</p>
-                    <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-12 h-8 rounded shadow-sm mb-3 logo-malaysia"></div>
+                            <h3 class="text-xl font-bold">Kevin Low</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Brother</p>
+                            <p class="text-xs text-stone-500 mb-2">Malaysia</p>
+                            <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                        </div>
+                    </div>
                 </div>
                 <!-- Daniel You -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-10 h-10 rounded shadow-sm mb-3 logo-ucdavis">UCD</div>
-                    <h3 class="text-xl font-bold">Daniel You</h3>
-                    <p class="text-sm text-stone-500 mb-2">Groomsman</p>
-                    <a href="tel:8325153979" class="text-amber-600 font-mono text-sm block">📱 (832) 515-3979</a>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-10 h-10 rounded shadow-sm mb-3 logo-ucdavis">UCD</div>
+                            <h3 class="text-xl font-bold">Daniel You</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
+                            <p class="text-xs text-stone-500 mb-2">UC Davis</p>
+                            <a href="tel:8325153979" class="text-amber-600 font-mono text-sm block">📱 (832) 515-3979</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- Matthew Manalastas -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-10 h-10 rounded-full shadow-sm mb-3 logo-genentech">G</div>
-                    <h3 class="text-xl font-bold">Matthew Manalastas</h3>
-                    <p class="text-sm text-stone-500 mb-2">Groomsman</p>
-                    <a href="tel:5109196948" class="text-amber-600 font-mono text-sm block">📱 (510) 919-6948</a>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-10 h-10 rounded-full shadow-sm mb-3 logo-genentech">G</div>
+                            <h3 class="text-xl font-bold">Matthew Manalastas</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Groomsman</p>
+                            <p class="text-xs text-stone-500 mb-2">Genentech</p>
+                            <a href="tel:5109196948" class="text-amber-600 font-mono text-sm block">📱 (510) 919-6948</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- Anjo Cordero -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-stone-100 text-xl">🏸</div>
-                    <h3 class="text-xl font-bold">Anjo Cordero</h3>
-                    <p class="text-sm text-stone-500 mb-2">Groomsman</p>
-                    <a href="tel:5107714623" class="text-amber-600 font-mono text-sm block">📱 (510) 771-4623</a>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-stone-100 text-xl">🏸</div>
+                            <h3 class="text-xl font-bold">Anjo Cordero</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Groomsman</p>
+                            <p class="text-xs text-stone-500 mb-2">Badminton</p>
+                            <a href="tel:5107714623" class="text-amber-600 font-mono text-sm block">📱 (510) 771-4623</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- Preston Jung -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-10 h-10 rounded shadow-sm mb-3 logo-ucdavis">UCD</div>
-                    <h3 class="text-xl font-bold">Preston Jung</h3>
-                    <p class="text-sm text-stone-500 mb-2">Crew</p>
-                    <a href="tel:9258589319" class="text-amber-600 font-mono text-sm block">📱 (925) 858-9319</a>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-10 h-10 rounded shadow-sm mb-3 logo-ucdavis">UCD</div>
+                            <h3 class="text-xl font-bold">Preston Jung</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
+                            <p class="text-xs text-stone-500 mb-2">UC Davis</p>
+                            <a href="tel:9258589319" class="text-amber-600 font-mono text-sm block">📱 (925) 858-9319</a>
+                        </div>
+                    </div>
                 </div>
                 <!-- Ray Ngan -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-stone-100 text-xl">🏸</div>
-                    <h3 class="text-xl font-bold">Ray Ngan</h3>
-                    <p class="text-sm text-stone-500 mb-2">Crew</p>
-                    <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-stone-100 text-xl">🏸</div>
+                            <h3 class="text-xl font-bold">Ray Ngan</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
+                            <p class="text-xs text-stone-500 mb-2">Badminton</p>
+                            <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                        </div>
+                    </div>
                 </div>
                 <!-- Tristan -->
-                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
-                    <div class="w-10 h-10 rounded-full shadow-sm mb-3 logo-genentech">G</div>
-                    <h3 class="text-xl font-bold">Tristan</h3>
-                    <p class="text-sm text-stone-500 mb-2">Crew</p>
-                    <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
+                    <div class="card-inner">
+                        <div class="card-front bg-white p-6">
+                            <div class="w-10 h-10 rounded-full shadow-sm mb-3 logo-genentech">G</div>
+                            <h3 class="text-xl font-bold">Tristan</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        </div>
+                        <div class="card-back p-6">
+                            <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
+                            <p class="text-xs text-stone-500 mb-2">Genentech</p>
+                            <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
