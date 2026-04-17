@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelmen's Bachelor Blueprint 2026</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+    
+    <!-- Chosen Palette: Warm Neutrals with Nature Accents (Stone, Goldenrod, Matcha Green, Espresso Brown) -->
+    <!-- Application Structure Plan: The SPA is designed as an interactive, single-page Dashboard for the bachelor party crew. It uses a logical flow: Event Overview -> The Squad (9 members) -> Financials (Budget for 9) -> The Pad & Activities (Filterable Pool). The Vibe Check has been removed to focus entirely on logistics and gameplay. -->
+    <!-- Visualization & Content Choices: 
+         1. Countdown Timer (JS text update): Essential for group hype.
+         2. Squad Grid (HTML/CSS): Organized for 9 members across responsive columns.
+         3. Budget Breakdown (Chart.js): Updated to reflect costs for a group of 9.
+         4. Activity Board (JS Filterable Grid): Categorizes the stay-in vs. out-and-about activities. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <style>
+        body { font-family: 'Outfit', sans-serif; }
+        html { scroll-behavior: smooth; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 500px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        .hide { display: none !important; }
+        .tab-active { border-bottom: 2px solid #1f2937; font-weight: 600; color: #1f2937; }
+        .tab-inactive { border-bottom: 2px solid transparent; color: #6b7280; }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-[#faf9f6] text-stone-800 antialiased">
+
+    <nav class="fixed top-0 w-full bg-[#faf9f6]/90 backdrop-blur-md border-b border-stone-200 z-50">
+        <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center overflow-x-auto whitespace-nowrap hide-scrollbar">
+                <a href="#hero" class="text-xl font-bold tracking-tighter text-stone-900 mr-8">KB'26</a>
+                <div class="flex space-x-6 text-sm font-medium">
+                    <a href="#squad" class="hover:text-amber-600 transition">The Squad</a>
+                    <a href="#budget" class="hover:text-amber-600 transition">The Damage</a>
+                    <a href="#pad" class="hover:text-amber-600 transition">The Pad & Play</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <header id="hero" class="pt-32 pb-20 px-4 text-center border-b border-stone-200">
+        <div class="max-w-3xl mx-auto">
+            <div class="text-4xl mb-4">💍🥂🎲</div>
+            <h1 class="text-5xl md:text-7xl font-extrabold tracking-tight text-stone-900 mb-6">Kelmen's Bachelor Weekend</h1>
+            <p class="text-xl text-stone-600 mb-8 font-light">Friday, July 31 – Monday, Aug 3, 2026 📍 Tahoe or SLO</p>
+            
+            <div class="inline-flex flex-col bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
+                <span class="text-sm uppercase tracking-widest text-stone-400 font-bold mb-2">Countdown to Liftoff</span>
+                <div class="flex space-x-4 text-center justify-center">
+                    <div class="flex flex-col"><span id="cd-days" class="text-3xl font-bold text-amber-600">00</span><span class="text-xs text-stone-500">Days</span></div>
+                    <div class="text-3xl font-bold text-stone-300">:</div>
+                    <div class="flex flex-col"><span id="cd-hours" class="text-3xl font-bold text-amber-600">00</span><span class="text-xs text-stone-500">Hours</span></div>
+                    <div class="text-3xl font-bold text-stone-300">:</div>
+                    <div class="flex flex-col"><span id="cd-mins" class="text-3xl font-bold text-amber-600">00</span><span class="text-xs text-stone-500">Mins</span></div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
+
+        <section id="squad" class="scroll-mt-24">
+            <div class="mb-10 text-center md:text-left">
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">The Squad (9 Total)</h2>
+                <p class="text-stone-600 max-w-2xl">The full lineup for the weekend. Access contact info for the groomsmen and brothers instantly.</p>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">👑</div>
+                    <h3 class="text-xl font-bold">Kelmen</h3>
+                    <p class="text-sm text-stone-500 mb-2">The Groom</p>
+                    <a href="tel:9256405618" class="text-amber-600 font-mono text-sm block">📱 (925) 640-5618</a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">📋</div>
+                    <h3 class="text-xl font-bold">Shane Low</h3>
+                    <p class="text-sm text-stone-500 mb-2">Head Planner</p>
+                    <a href="tel:9252705245" class="text-amber-600 font-mono text-sm block">📱 (925) 270-5245</a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">🤝</div>
+                    <h3 class="text-xl font-bold">Kevin Low</h3>
+                    <p class="text-sm text-stone-500 mb-2">Brother</p>
+                    <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">📱</div>
+                    <h3 class="text-xl font-bold">Daniel You</h3>
+                    <p class="text-sm text-stone-500 mb-2">Groomsman</p>
+                    <a href="tel:8325153979" class="text-amber-600 font-mono text-sm block">📱 (832) 515-3979</a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">🍻</div>
+                    <h3 class="text-xl font-bold">Matthew Manalastas</h3>
+                    <p class="text-sm text-stone-500 mb-2">Groomsman</p>
+                    <a href="tel:5109196948" class="text-amber-600 font-mono text-sm block">📱 (510) 919-6948</a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">🍻</div>
+                    <h3 class="text-xl font-bold">Anjo Cordero</h3>
+                    <p class="text-sm text-stone-500 mb-2">Groomsman</p>
+                    <a href="tel:5107714623" class="text-amber-600 font-mono text-sm block">📱 (510) 771-4623</a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">🍻</div>
+                    <h3 class="text-xl font-bold">Preston Jung</h3>
+                    <p class="text-sm text-stone-500 mb-2">Crew</p>
+                    <a href="tel:9258589319" class="text-amber-600 font-mono text-sm block">📱 (925) 858-9319</a>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">🕶️</div>
+                    <h3 class="text-xl font-bold">Ray Ngan</h3>
+                    <p class="text-sm text-stone-500 mb-2">Crew</p>
+                    <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-stone-100 hover:shadow-md transition">
+                    <div class="text-2xl mb-2">🕶️</div>
+                    <h3 class="text-xl font-bold">Tristan</h3>
+                    <p class="text-sm text-stone-500 mb-2">Crew</p>
+                    <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                </div>
+            </div>
+        </section>
+
+        <section id="budget" class="scroll-mt-24">
+            <div class="flex flex-col md:flex-row gap-12 items-center">
+                <div class="md:w-1/2">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-4">The Damage (Budget)</h2>
+                    <p class="text-stone-600 mb-6">Targeting ~$1,050 per person for the long weekend. This covers lodging, food, high-end activities, and the "Wiggle Room" fund.</p>
+                    
+                    <div class="bg-stone-100 p-6 rounded-xl border border-stone-200">
+                        <div class="flex justify-between items-center mb-4 border-b border-stone-200 pb-4">
+                            <span class="font-bold text-stone-700">Per Person Goal</span>
+                            <span class="text-2xl font-black text-amber-600">~$1,050 <span class="text-sm text-stone-500 font-normal">/person</span></span>
+                        </div>
+                        <ul class="space-y-3 text-sm">
+                            <li class="flex justify-between"><span class="flex items-center">🏠 Lodging (Avg)</span> <span class="font-bold">$350</span></li>
+                            <li class="flex justify-between"><span class="flex items-center">🍔 Spend (Food/Fun)</span> <span class="font-bold">$600</span></li>
+                            <li class="flex justify-between"><span class="flex items-center">🎁 RC Bonus Fund</span> <span class="font-bold">+$100</span></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="md:w-1/2 w-full">
+                    <div class="chart-container">
+                        <canvas id="budgetChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="pad" class="scroll-mt-24">
+            <div class="mb-10">
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">The Pad & The Play</h2>
+                <p class="text-stone-600 max-w-3xl">With 9 people, we need a house with major table space and amenities. Explore the game library and external activities below.</p>
+            </div>
+
+            <div class="bg-stone-900 text-stone-50 p-8 rounded-2xl mb-12 shadow-lg">
+                <h3 class="text-xl font-bold mb-6 text-amber-400">🏠 Airbnb Requirements (for 9 People)</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-4">🪑</span>
+                        <div>
+                            <h4 class="font-bold">Massive Table</h4>
+                            <p class="text-stone-400 text-sm">Must comfortably seat all 9 of us for long game marathons.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-4">♨️</span>
+                        <div>
+                            <h4 class="font-bold">Hot Tub</h4>
+                            <p class="text-stone-400 text-sm">Non-negotiable for late-night vibes.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-4">🥩</span>
+                        <div>
+                            <h4 class="font-bold">BBQ Grill</h4>
+                            <p class="text-stone-400 text-sm">Essential for the Friday "Tacos & Tequila" kickoff.</p>
+                        </div>
+                    </div>
+                    <div class="flex items-start">
+                        <span class="text-2xl mr-4">🧖</span>
+                        <div>
+                            <h4 class="font-bold">Sauna or Steam Room</h4>
+                            <p class="text-stone-400 text-sm">High priority for the stay-in recovery vibe.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <div class="flex space-x-2 overflow-x-auto pb-2 border-b border-stone-200 hide-scrollbar" id="activity-filters">
+                    <button class="px-4 py-2 font-medium tab-active transition whitespace-nowrap" data-filter="all">All Activities</button>
+                    <button class="px-4 py-2 font-medium tab-inactive transition whitespace-nowrap" data-filter="staying-in">🎲 Game Library</button>
+                    <button class="px-4 py-2 font-medium tab-inactive transition whitespace-nowrap" data-filter="traditions">🍵 Traditions</button>
+                    <button class="px-4 py-2 font-medium tab-inactive transition whitespace-nowrap" data-filter="outings">🚗 Cabin Fever</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20" id="activity-grid">
+                
+                <div class="activity-card staying-in bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2 block">Game Library</span>
+                    <h4 class="text-lg font-bold mb-2">Nintendo Switch</h4>
+                    <p class="text-sm text-stone-600">Need a console + Smash Bros, Mario Kart, and Mario Party for the TV.</p>
+                </div>
+                <div class="activity-card staying-in bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2 block">Game Library</span>
+                    <h4 class="text-lg font-bold mb-2">Board Games</h4>
+                    <p class="text-sm text-stone-600">Catan (5-6 player exp), 7 Wonders, Codenames (9-player friendly!), Coup.</p>
+                </div>
+                <div class="activity-card staying-in bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2 block">Game Library</span>
+                    <h4 class="text-lg font-bold mb-2">Jackbox & Party</h4>
+                    <p class="text-sm text-stone-600">Everyone's phones are the controllers. Beer Die / Pong for the BBQ hours.</p>
+                </div>
+
+                <div class="activity-card traditions bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2 block">Tradition</span>
+                    <h4 class="text-lg font-bold mb-2">Tacos & Tequila Night</h4>
+                    <p class="text-sm text-stone-600">Massive spread at the house on Friday. High quality Tequila + BBQ Tacos.</p>
+                </div>
+                <div class="activity-card traditions bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2 block">Tradition</span>
+                    <h4 class="text-lg font-bold mb-2">The Craft & The Cake</h4>
+                    <p class="text-sm text-stone-600">Decoden kits for Polaroid frames. Whole Foods Berry Chantilly Cake cutting.</p>
+                </div>
+                <div class="activity-card traditions bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2 block">Tradition</span>
+                    <h4 class="text-lg font-bold mb-2">Matcha Mornings</h4>
+                    <p class="text-sm text-stone-600">Slow mornings at the house with high-quality matcha and espresso martinis.</p>
+                </div>
+
+                <div class="activity-card outings bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2 block">Cabin Fever</span>
+                    <h4 class="text-lg font-bold mb-2">ATV / Off-roading</h4>
+                    <p class="text-sm text-stone-600">Hitting the Tahoe trails or Oceano Dunes. High adrenaline break from gaming.</p>
+                </div>
+                <div class="activity-card outings bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2 block">Cabin Fever</span>
+                    <h4 class="text-lg font-bold mb-2">Shooting Range</h4>
+                    <p class="text-sm text-stone-600">Target practice or clay pigeons. A focused morning outing for the boys.</p>
+                </div>
+                <div class="activity-card outings bg-white p-6 rounded-xl border border-stone-200">
+                    <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2 block">Cabin Fever</span>
+                    <h4 class="text-lg font-bold mb-2">The Big Night Out</h4>
+                    <p class="text-sm text-stone-600">One nice dinner + Bottle Service (Hip-Hop/RnB/Y2K vibes). Dress sharp.</p>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-900 text-stone-400 py-8 text-center text-sm">
+        <p>Kelmen's Bachelor Blueprint | Digital Itinerary</p>
+        <p class="mt-2 text-stone-500">9 People. Lock the house. Game check. Send invites (Mid-May).</p>
+    </footer>
+
+    <script>
+        const targetDate = new Date("July 31, 2026 15:00:00").getTime();
+        
+        function updateCountdown() {
+            const now = new Date().getTime();
+            const distance = targetDate - now;
+
+            if (distance < 0) {
+                document.getElementById("cd-days").innerText = "00";
+                document.getElementById("cd-hours").innerText = "00";
+                document.getElementById("cd-mins").innerText = "00";
+                return;
+            }
+
+            const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+
+            document.getElementById("cd-days").innerText = days.toString().padStart(2, '0');
+            document.getElementById("cd-hours").innerText = hours.toString().padStart(2, '0');
+            document.getElementById("cd-mins").innerText = minutes.toString().padStart(2, '0');
+        }
+        
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        const ctx = document.getElementById('budgetChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Lodging ($350)', 'Spend/Food ($600)', 'RC Fund ($100)'],
+                datasets: [{
+                    data: [350, 600, 100],
+                    backgroundColor: ['#d97706', '#1f2937', '#10b981'],
+                    borderWidth: 0,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                cutout: '70%',
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            font: { family: "'Outfit', sans-serif" },
+                            padding: 20
+                        }
+                    },
+                    tooltip: {
+                        backgroundColor: '#1f2937',
+                        titleFont: { family: "'Outfit', sans-serif" },
+                        bodyFont: { family: "'Outfit', sans-serif" },
+                        padding: 12,
+                        cornerRadius: 8
+                    }
+                }
+            }
+        });
+
+        const filterBtns = document.querySelectorAll('#activity-filters button');
+        const activityCards = document.querySelectorAll('.activity-card');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                filterBtns.forEach(b => {
+                    b.classList.remove('tab-active');
+                    b.classList.add('tab-inactive');
+                });
+                btn.classList.remove('tab-inactive');
+                btn.classList.add('tab-active');
+
+                const filter = btn.getAttribute('data-filter');
+
+                activityCards.forEach(card => {
+                    if (filter === 'all' || card.classList.contains(filter)) {
+                        card.classList.remove('hide');
+                    } else {
+                        card.classList.add('hide');
+                    }
+                });
+            });
+        });
+
+    </script>
+</body>
+</html>
