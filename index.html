@@ -5,7 +5,8 @@
      2. Squad Cards: CSS 3D transforms reveal affiliation and contact info. 
      3. Summary Card: Specifically formatted text for spreadsheet migration.
      4. Dynamic Budget: Chart.js instance linked to range inputs for live data manipulation. 
-     5. Planner's Grid: A dynamic day/hour grid using Native JS Drag & Drop API and contenteditable attributes for real-time drafting. -->
+     5. Planner's Grid: A dynamic day/hour grid using Native JS Drag & Drop API and contenteditable attributes for real-time drafting. 
+     6. PERSISTENCE: Integrated real-time cloud storage to sync planner cards across all devices using the required architecture. -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
 <!DOCTYPE html>
@@ -67,7 +68,7 @@
         .card-container, .activity-card-container, .planner-card-container { perspective: 1000px; cursor: pointer; }
         .card-container { height: 180px; }
         .activity-card-container { height: 210px; }
-        .planner-card-container { height: 120px; width: 100%; margin-bottom: 8px; }
+        .planner-card-container { height: 140px; width: 100%; margin-bottom: 8px; }
         
         .card-inner {
             position: relative; width: 100%; height: 100%;
@@ -89,7 +90,7 @@
         .planner-grid { display: grid; grid-template-columns: 80px repeat(4, 1fr); gap: 1px; background-color: #e7e5e4; border: 1px solid #e7e5e4; }
         .planner-header { background-color: #1f2937; color: white; padding: 12px; text-align: center; font-weight: 700; font-size: 0.85rem; }
         .planner-time-col { background-color: #f5f5f4; padding: 8px; font-weight: 600; font-size: 0.75rem; text-align: right; color: #78716c; border-bottom: 1px solid #e7e5e4; }
-        .planner-slot { background-color: white; min-height: 100px; padding: 8px; transition: background 0.2s; border-bottom: 1px solid #e7e5e4; border-right: 1px solid #e7e5e4; }
+        .planner-slot { background-color: white; min-height: 120px; padding: 8px; transition: background 0.2s; border-bottom: 1px solid #e7e5e4; border-right: 1px solid #e7e5e4; }
         .planner-slot.drag-over { background-color: #fef3c7; }
         
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
@@ -386,7 +387,7 @@ Ray Ngan	3472650293</div>
             </div>
 
             <!-- Interactive Activity Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" id="activity-grid">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20" id="activity-grid">
                 
                 <div class="activity-card-container staying-in" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
@@ -411,7 +412,7 @@ Ray Ngan	3472650293</div>
                             <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-amber-50">
-                            <p class="text-sm text-amber-900 leading-relaxed font-medium">Friday kickoff. Full spread of BBQ and drinks at the house.</p>
+                            <p class="text-sm text-amber-900 leading-relaxed font-medium">Friday kickoff event. Full spread of BBQ and drinks at the house.</p>
                         </div>
                     </div>
                 </div>
@@ -438,7 +439,7 @@ Ray Ngan	3472650293</div>
             <div class="mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
                 <div class="text-center md:text-left">
                     <h2 class="text-3xl font-bold text-stone-900 mb-4">The Planner’s Master Draft</h2>
-                    <p class="text-stone-600 max-w-2xl">Shane & Kevin: This is your live sandbox. Create event cards, drag them to specific hours, and flip them to edit logistics. Changes are temporary per session—use this to finalize the plan before sending the invite.</p>
+                    <p class="text-stone-600 max-w-2xl">Shane & Kevin: This plan is saved in real-time. Create event cards, drag them to specific hours, and flip them to edit logistics. All changes sync across devices automatically.</p>
                 </div>
                 <button id="add-planner-card" class="bg-amber-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-amber-700 transition flex items-center shadow-lg shadow-amber-200">
                     <span class="mr-2">➕</span> Create Draft Card
@@ -448,7 +449,7 @@ Ray Ngan	3472650293</div>
             <div class="overflow-x-auto hide-scrollbar rounded-3xl border border-stone-200 shadow-xl bg-white">
                 <div class="planner-grid min-w-[1000px]">
                     <!-- Hour Columns -->
-                    <div class="planner-header bg-stone-800">Time</div>
+                    <div class="planner-header bg-stone-800 text-stone-200 uppercase tracking-widest text-[10px]">Time</div>
                     <div class="planner-header">Fri (7/31)</div>
                     <div class="planner-header">Sat (8/1)</div>
                     <div class="planner-header">Sun (8/2)</div>
@@ -458,9 +459,9 @@ Ray Ngan	3472650293</div>
                     <div id="planner-rows-container" class="contents"></div>
                 </div>
             </div>
-            <div class="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-center text-sm text-amber-800">
-                <span class="mr-3">💡</span>
-                <p>Drag any card to a new time or day. Tap the card to flip and enter addresses, links, or specific notes.</p>
+            <div class="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-center text-sm text-amber-800 shadow-sm">
+                <span class="mr-3">☁️</span>
+                <p class="font-medium">Live Cloud Sync Enabled. Drag any card to move. Tap to flip and edit addresses or notes.</p>
             </div>
         </section>
 
@@ -469,11 +470,28 @@ Ray Ngan	3472650293</div>
     <footer class="bg-stone-900 text-stone-400 py-12 text-center text-sm border-t border-stone-800">
         <div class="max-w-6xl mx-auto px-4">
             <p class="font-bold text-stone-200 tracking-wide uppercase text-xs">Kelmen's Bachelor Blueprint | Summer 2026</p>
-            <p class="mt-4 max-w-md mx-auto text-stone-500 leading-relaxed">7 People. Elite House. Planners: Lock the pad by May. Send digital invites mid-May.</p>
+            <p class="mt-4 max-w-md mx-auto text-stone-500 leading-relaxed">7 People. Elite House. Real-time Planning. Planners: Lock the pad by May.</p>
         </div>
     </footer>
 
-    <script>
+    <script type="module">
+        // Firebase Integration Logic
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Setup
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kb-bach-2026';
+        let user = null;
+
+        // Path Rule 1 compliant path
+        const cardsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'plannerCards');
+
+        // Reactive Countdown
         const targetDate = new Date("July 31, 2026 15:00:00").getTime();
         function updateCountdown() {
             const now = new Date().getTime();
@@ -494,6 +512,7 @@ Ray Ngan	3472650293</div>
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
+        // Budget Logic
         const ctx = document.getElementById('budgetChart').getContext('2d');
         const budgetChart = new Chart(ctx, {
             type: 'doughnut',
@@ -534,6 +553,7 @@ Ray Ngan	3472650293</div>
         document.getElementById('lodging-slider').addEventListener('input', updateBudget);
         document.getElementById('spend-slider').addEventListener('input', updateBudget);
 
+        // Activity Filtering
         const filterBtns = document.querySelectorAll('#activity-filters button');
         const activityCards = document.querySelectorAll('.activity-card-container');
         filterBtns.forEach(btn => {
@@ -553,12 +573,12 @@ Ray Ngan	3472650293</div>
             });
         });
 
-        // PLANNER LOGIC
+        // PLANNER & CLOUD SYNC LOGIC
         const plannerContainer = document.getElementById('planner-rows-container');
         const hours = ["8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM", "12 AM"];
         const days = ["fri", "sat", "sun", "mon"];
 
-        function initPlanner() {
+        function buildPlannerGrid() {
             hours.forEach(hour => {
                 const hourCell = document.createElement('div');
                 hourCell.className = 'planner-time-col';
@@ -571,73 +591,150 @@ Ray Ngan	3472650293</div>
                     slot.id = `slot-${day}-${hour.replace(' ', '')}`;
                     slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
                     slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
-                    slot.addEventListener('drop', handleDrop);
+                    slot.addEventListener('drop', (e) => handleDrop(e, slot, day, hour.replace(' ', '')));
                     plannerContainer.appendChild(slot);
                 });
             });
-
-            // Pre-populate with a few starters
-            createPlannerCard('Arrival & House Party', 'fri', '4PM');
-            createPlannerCard('Breakfast & Strategy', 'sat', '10AM');
-            createPlannerCard('Adrenaline Outing', 'sat', '1PM');
         }
 
-        function createPlannerCard(titleText, day, hour) {
-            const cardId = 'card-' + Date.now();
-            const slot = document.getElementById(`slot-${day}-${hour}`) || document.getElementsByClassName('planner-slot')[0];
+        async function createPlannerCardInCloud(titleText, day, hour) {
+            if (!user) return;
+            try {
+                await addDoc(cardsCollection, {
+                    title: titleText,
+                    day: day,
+                    hour: hour,
+                    location: 'TBD',
+                    timeDetail: hour + ' Approx',
+                    notes: 'Add details here...',
+                    createdAt: Date.now()
+                });
+            } catch (e) {
+                console.error("Error adding card: ", e);
+            }
+        }
+
+        function createPlannerCardUI(docId, data) {
+            const slot = document.getElementById(`slot-${data.day}-${data.hour}`) || document.getElementsByClassName('planner-slot')[0];
             
             const card = document.createElement('div');
             card.className = 'planner-card-container';
-            card.id = cardId;
+            card.id = docId;
             card.draggable = true;
             card.innerHTML = `
                 <div class="card-inner w-full h-full">
                     <div class="card-front bg-white border-amber-200 border-2">
-                        <h5 class="text-[10px] font-bold text-amber-600 uppercase mb-1" contenteditable="true">${titleText}</h5>
+                        <h5 class="text-[10px] font-bold text-amber-600 uppercase mb-1 px-2" contenteditable="true" data-field="title">${data.title}</h5>
                         <p class="text-[9px] text-stone-400">Flip to Edit 🔄</p>
                     </div>
                     <div class="card-back text-left p-2 text-[9px] flex flex-col gap-1">
-                        <div><strong class="text-stone-400 uppercase text-[8px]">Loc/Addr:</strong> <div contenteditable="true" class="text-stone-900">TBD</div></div>
-                        <div><strong class="text-stone-400 uppercase text-[8px]">Time Detail:</strong> <div contenteditable="true" class="text-stone-900">${hour} Approx</div></div>
-                        <div><strong class="text-stone-400 uppercase text-[8px]">Notes:</strong> <div contenteditable="true" class="text-stone-900 italic">Add details here...</div></div>
-                        <button onclick="this.closest('.planner-card-container').remove()" class="mt-1 text-red-500 font-bold uppercase text-[7px] text-right">Delete ❌</button>
+                        <div><strong class="text-stone-400 uppercase text-[8px]">Loc/Addr:</strong> <div contenteditable="true" class="text-stone-900" data-field="location">${data.location}</div></div>
+                        <div><strong class="text-stone-400 uppercase text-[8px]">Time Detail:</strong> <div contenteditable="true" class="text-stone-900" data-field="timeDetail">${data.timeDetail}</div></div>
+                        <div><strong class="text-stone-400 uppercase text-[8px]">Notes:</strong> <div contenteditable="true" class="text-stone-900 italic" data-field="notes">${data.notes}</div></div>
+                        <button class="delete-btn mt-1 text-red-500 font-bold uppercase text-[7px] text-right">Delete ❌</button>
                     </div>
                 </div>
             `;
 
+            // Drag behavior
             card.addEventListener('dragstart', e => {
-                e.dataTransfer.setData('text/plain', card.id);
+                e.dataTransfer.setData('text/plain', docId);
                 setTimeout(() => card.classList.add('opacity-50'), 0);
             });
             card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
             
+            // Flip behavior
             card.addEventListener('click', (e) => {
-                if (e.target.hasAttribute('contenteditable')) return;
+                if (e.target.hasAttribute('contenteditable') || e.target.classList.contains('delete-btn')) return;
                 card.querySelector('.card-inner').classList.toggle('flipped');
+            });
+
+            // Save on change (using blur to capture edits)
+            card.querySelectorAll('[contenteditable]').forEach(el => {
+                el.addEventListener('blur', async () => {
+                    const field = el.getAttribute('data-field');
+                    const value = el.innerText;
+                    if (!user) return;
+                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'plannerCards', docId), {
+                        [field]: value
+                    });
+                });
+                // Prevent bubbling to keep card from flipping/dragging during typing
+                el.addEventListener('click', e => e.stopPropagation());
+            });
+
+            // Delete behavior
+            card.querySelector('.delete-btn').addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (!user) return;
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'plannerCards', docId));
             });
 
             slot.appendChild(card);
         }
 
-        function handleDrop(e) {
+        async function handleDrop(e, slot, day, hour) {
             e.preventDefault();
-            this.classList.remove('drag-over');
-            const cardId = e.dataTransfer.getData('text/plain');
-            const card = document.getElementById(cardId);
-            if (card) this.appendChild(card);
+            slot.classList.remove('drag-over');
+            const docId = e.dataTransfer.getData('text/plain');
+            if (!user) return;
+            
+            try {
+                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'plannerCards', docId), {
+                    day: day,
+                    hour: hour
+                });
+            } catch (err) {
+                console.error("Drop save failed", err);
+            }
         }
 
+        // Initialize Firebase Auth and Real-time Listeners
+        const initCloudSession = async () => {
+            // Rule 3: Auth First
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (err) {
+                console.error("Auth failed:", err);
+            }
+
+            onAuthStateChanged(auth, (u) => {
+                user = u;
+                if (!user) return;
+
+                // Sync UI with Firestore
+                onSnapshot(cardsCollection, (snapshot) => {
+                    // Clear existing planner cards in UI (not the slots)
+                    document.querySelectorAll('.planner-card-container').forEach(c => c.remove());
+                    
+                    snapshot.forEach((doc) => {
+                        createPlannerCardUI(doc.id, doc.data());
+                    });
+                }, (error) => {
+                    console.error("Planner sync error:", error);
+                });
+            });
+        };
+
+        // UI Setup and Kickoff
+        buildPlannerGrid();
+        initCloudSession();
+
         document.getElementById('add-planner-card').addEventListener('click', () => {
-            createPlannerCard('New Activity', 'fri', '8AM');
+            createPlannerCardInCloud('New Activity', 'fri', '8AM');
         });
 
-        initPlanner();
-
+        // Global prevent default for flip/click conflicts
         document.querySelectorAll('.card-inner, .activity-card-container .card-inner').forEach(inner => {
             inner.addEventListener('click', (e) => {
                 if (e.target.tagName === 'A' || e.target.hasAttribute('contenteditable')) e.stopPropagation();
             });
         });
+
     </script>
 </body>
 </html>
