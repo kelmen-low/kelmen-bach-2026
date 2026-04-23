@@ -1,12 +1,12 @@
 <!-- Chosen Palette: Warm Neutrals with Nature Accents (Stone, Goldenrod, Matcha Green, Espresso Brown) -->
-<!-- Application Structure Plan: The SPA is a dashboard designed for a party of 7. It prioritizes the "Squad" section using 3D interactive flip cards, including a summary card for Excel. The "Damage" section is fully interactive with sliders. The "Pad & Play" section organizes trip ideas. Finally, a new "Planner's Master Draft" section provides a drag-and-drop calendar interface with editable flip-cards for logistics management. -->
+<!-- Application Structure Plan: The SPA is a dashboard designed for a party of 7. It prioritizes the "Squad" section using 3D interactive flip cards. The "Damage" section is fully interactive with sliders. Finally, a new "Planner's Master Draft" section provides a drag-and-drop calendar interface. The data management has been shifted from cloud to local CSV export/import, allowing planners to save their progress as a portable file. -->
 <!-- Visualization & Content Choices: 
-     1. Reactive Countdown: Vanilla JS updates a multi-unit display every second.
+     1. Reactive Countdown: Vanilla JS updates every second.
      2. Squad Cards: CSS 3D transforms reveal affiliation and contact info. 
      3. Summary Card: Specifically formatted text for spreadsheet migration.
-     4. Dynamic Budget: Chart.js instance linked to range inputs for live data manipulation. 
-     5. Planner's Grid: A dynamic day/hour grid using Native JS Drag & Drop API and contenteditable attributes for real-time drafting. 
-     6. PERSISTENCE: Integrated real-time cloud storage to sync planner cards across all devices using the required architecture. -->
+     4. Dynamic Budget: Chart.js instance linked to range inputs. 
+     5. Planner's Grid: A dynamic day/hour grid using Native JS Drag & Drop API. 
+     6. CSV Persistence: Custom JS logic to serialize planner cards into CSV format for download and parse them back for upload. -->
 <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
 
 <!DOCTYPE html>
@@ -116,7 +116,6 @@
         </div>
     </nav>
 
-    <!-- Header Section with Interactive Countdown -->
     <header id="hero" class="pt-32 pb-20 px-4 text-center border-b border-stone-200">
         <div class="max-w-3xl mx-auto">
             <div class="text-4xl mb-4">💍🥂🎲</div>
@@ -153,11 +152,10 @@
         <section id="squad" class="scroll-mt-24">
             <div class="mb-10 text-center md:text-left">
                 <h2 class="text-3xl font-bold text-stone-900 mb-4">The Squad (7 Total)</h2>
-                <p class="text-stone-600 max-w-2xl">The lineup for Summer 2026. Tap any card below to reveal info. The final card provides a clean list for Excel copy-pasting.</p>
+                <p class="text-stone-600 max-w-2xl">The lineup for Summer 2026. Tap any card below to reveal info.</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
                 
-                <!-- Card: Kelmen -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -167,12 +165,11 @@
                         </div>
                         <div class="card-back bg-amber-50">
                             <p class="text-sm font-bold text-amber-800 mb-1">The Groom</p>
-                            <a href="tel:9256405618" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (925) 640-5618</a>
+                            <a href="tel:9256405618" class="text-amber-600 font-mono text-sm block underline">📱 (925) 640-5618</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Shane -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -183,12 +180,11 @@
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Head Planner</p>
                             <p class="text-xs text-stone-500 mb-2 font-medium">Malaysia</p>
-                            <a href="tel:9252705245" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (925) 270-5245</a>
+                            <a href="tel:9252705245" class="text-amber-600 font-mono text-sm block underline">📱 (925) 270-5245</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Kevin -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -204,7 +200,6 @@
                     </div>
                 </div>
 
-                <!-- Card: Matthew -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -215,12 +210,11 @@
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Groomsman</p>
                             <p class="text-xs text-stone-500 mb-2 font-medium">Genentech</p>
-                            <a href="tel:5109196948" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (510) 919-6948</a>
+                            <a href="tel:5109196948" class="text-amber-600 font-mono text-sm block underline">📱 (510) 919-6948</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Anjo -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -231,12 +225,11 @@
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Groomsman</p>
                             <p class="text-xs text-stone-500 mb-2 font-medium">Badminton</p>
-                            <a href="tel:5107714623" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (510) 771-4623</a>
+                            <a href="tel:5107714623" class="text-amber-600 font-mono text-sm block underline">📱 (510) 771-4623</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Preston -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -247,12 +240,11 @@
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
                             <p class="text-xs text-stone-500 mb-2 font-medium">UC Davis</p>
-                            <a href="tel:9258589319" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (925) 858-9319</a>
+                            <a href="tel:9258589319" class="text-amber-600 font-mono text-sm block underline">📱 (925) 858-9319</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Ray -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -263,12 +255,12 @@
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
                             <p class="text-xs text-stone-500 mb-2 font-medium">Badminton</p>
-                            <a href="tel:3472650293" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (347) 265-0293</a>
+                            <a href="tel:3472650293" class="text-amber-600 font-mono text-sm block underline">📱 (347) 265-0293</a>
                         </div>
                     </div>
                 </div>
 
-                <!-- Card: Summary -->
+                <!-- Excel Summary Card -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-stone-800 text-stone-100">
@@ -292,12 +284,12 @@ Ray Ngan	3472650293</div>
             </div>
         </section>
 
-        <!-- Financial Breakdown Section (ADJUSTABLE) -->
+        <!-- Dynamic Budget Section -->
         <section id="budget" class="scroll-mt-24">
             <div class="flex flex-col lg:flex-row gap-12 items-center">
                 <div class="lg:w-1/2">
                     <h2 class="text-3xl font-bold text-stone-900 mb-4">The Damage (Adjustable)</h2>
-                    <p class="text-stone-600 mb-8">Use the sliders below to adjust the estimated costs. The chart and per-person total will update automatically to reflect your planning choices.</p>
+                    <p class="text-stone-600 mb-8">Tweak the sliders to see how budget changes affect the total per person.</p>
                     
                     <div class="space-y-8 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
                         <div class="space-y-3">
@@ -315,11 +307,11 @@ Ray Ngan	3472650293</div>
                                 <span class="text-lg font-black text-stone-900">$<span id="spend-val">600</span></span>
                             </div>
                             <input type="range" id="spend-slider" min="300" max="1000" step="25" value="600">
-                            <p class="text-[10px] text-stone-400">Meals, Drinks, Adrenaline, etc.</p>
+                            <p class="text-[10px] text-stone-400">Food, Drinks, Activities, etc.</p>
                         </div>
 
                         <div class="pt-6 border-t border-stone-100 flex justify-between items-center">
-                            <span class="font-bold text-stone-700 uppercase tracking-tight text-xs">Updated Target Per Person</span>
+                            <span class="font-bold text-stone-700 uppercase tracking-tight text-xs">Target Per Person</span>
                             <span class="text-4xl font-black text-amber-600">$<span id="budget-total">950</span></span>
                         </div>
                     </div>
@@ -332,136 +324,69 @@ Ray Ngan	3472650293</div>
             </div>
         </section>
 
-        <!-- Pad & Activity Pool Section -->
+        <!-- Pad & Ideas -->
         <section id="pad" class="scroll-mt-24">
             <div class="mb-10">
                 <h2 class="text-3xl font-bold text-stone-900 mb-4">The Pad & The Play</h2>
-                <p class="text-stone-600 max-w-3xl">With a crew of 7, we are prioritizing a "Stay-In" house culture. Use these ideas to populate the draft calendar below.</p>
+                <p class="text-stone-600 max-w-3xl">Ideas and non-negotiables. Populate these into your draft below.</p>
             </div>
-
-            <!-- Airbnb Requirements -->
-            <div class="bg-stone-900 text-stone-50 p-8 rounded-3xl mb-12 shadow-xl border border-stone-800">
-                <h3 class="text-xl font-bold mb-6 text-amber-400 flex items-center">
-                    <span class="mr-3">🏠</span> Airbnb Non-Negotiables
-                </h3>
+            <div class="bg-stone-900 text-stone-50 p-8 rounded-3xl mb-12 border border-stone-800">
                 <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">🪑</span>
-                        <div>
-                            <h4 class="font-bold text-stone-100 text-sm">Massive Table</h4>
-                            <p class="text-stone-400 text-[10px] mt-1">Must seat all 7 for game marathons.</p>
-                        </div>
+                        <div><h4 class="font-bold text-stone-100 text-sm">Massive Table</h4><p class="text-stone-400 text-[10px] mt-1">Seats all 7 for marathons.</p></div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">♨️</span>
-                        <div>
-                            <h4 class="font-bold text-stone-100 text-sm">Hot Tub</h4>
-                            <p class="text-stone-400 text-[10px] mt-1">Essential for post-gaming recovery.</p>
-                        </div>
+                        <div><h4 class="font-bold text-stone-100 text-sm">Hot Tub</h4><p class="text-stone-400 text-[10px] mt-1">Essential for recovery.</p></div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">🥩</span>
-                        <div>
-                            <h4 class="font-bold text-stone-100 text-sm">BBQ Grill</h4>
-                            <p class="text-stone-400 text-[10px] mt-1">Required for the house party kickoff.</p>
-                        </div>
+                        <div><h4 class="font-bold text-stone-100 text-sm">BBQ Grill</h4><p class="text-stone-400 text-[10px] mt-1">For house party kickoff.</p></div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">🧖</span>
-                        <div>
-                            <h4 class="font-bold text-stone-100 text-sm">Sauna / Steam</h4>
-                            <p class="text-stone-400 text-[10px] mt-1">High priority for wellness sessions.</p>
-                        </div>
+                        <div><h4 class="font-bold text-stone-100 text-sm">Sauna / Steam</h4><p class="text-stone-400 text-[10px] mt-1">High priority wellness.</p></div>
                     </div>
                 </div>
-            </div>
-
-            <!-- Activity Filters -->
-            <div class="mb-8">
-                <div class="flex space-x-3 overflow-x-auto pb-4 hide-scrollbar" id="activity-filters">
-                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-active transition whitespace-nowrap" data-filter="all">All Items</button>
-                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-inactive transition whitespace-nowrap" data-filter="staying-in">🎲 Game Library</button>
-                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-inactive transition whitespace-nowrap" data-filter="traditions">🔥 Traditions</button>
-                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-inactive transition whitespace-nowrap" data-filter="outings">🚗 Cabin Fever</button>
-                </div>
-            </div>
-
-            <!-- Interactive Activity Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20" id="activity-grid">
-                
-                <div class="activity-card-container staying-in" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
-                    <div class="card-inner">
-                        <div class="card-front bg-white text-center">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2">Game Library</span>
-                            <div class="text-3xl mb-3">🎮</div>
-                            <h4 class="text-lg font-extrabold">Nintendo Switch</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
-                        </div>
-                        <div class="card-back bg-blue-50">
-                            <p class="text-sm text-blue-900 leading-relaxed font-medium">Smash, Mario Kart, and Mario Party. Strategy mode: ON.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="activity-card-container traditions" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
-                    <div class="card-inner">
-                        <div class="card-front bg-white text-center">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-2">Tradition</span>
-                            <div class="text-3xl mb-3">🍻</div>
-                            <h4 class="text-lg font-extrabold">House Party</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
-                        </div>
-                        <div class="card-back bg-amber-50">
-                            <p class="text-sm text-amber-900 leading-relaxed font-medium">Friday kickoff event. Full spread of BBQ and drinks at the house.</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="activity-card-container outings" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
-                    <div class="card-inner">
-                        <div class="card-front bg-white text-center">
-                            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-2">Cabin Fever</span>
-                            <div class="text-3xl mb-3">🚜</div>
-                            <h4 class="text-lg font-extrabold">ATV & Shooting</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
-                        </div>
-                        <div class="card-back bg-emerald-50">
-                            <p class="text-sm text-emerald-900 leading-relaxed font-medium">Off-road trails and range session for target practice.</p>
-                        </div>
-                    </div>
-                </div>
-
             </div>
         </section>
 
         <!-- PLANNER DRAFT SECTION -->
         <section id="planner" class="scroll-mt-24 pb-20">
-            <div class="mb-10 flex flex-col md:flex-row justify-between items-end gap-6">
+            <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div class="text-center md:text-left">
                     <h2 class="text-3xl font-bold text-stone-900 mb-4">The Planner’s Master Draft</h2>
-                    <p class="text-stone-600 max-w-2xl">Shane & Kevin: This plan is saved in real-time. Create event cards, drag them to specific hours, and flip them to edit logistics. All changes sync across devices automatically.</p>
+                    <p class="text-stone-600 max-w-2xl">Shane & Kevin: Drag cards to move times. Flip cards to edit details. **Save as CSV** to keep your work or share the file.</p>
                 </div>
-                <button id="add-planner-card" class="bg-amber-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-amber-700 transition flex items-center shadow-lg shadow-amber-200">
-                    <span class="mr-2">➕</span> Create Draft Card
-                </button>
+                <div class="flex flex-wrap gap-3">
+                    <button id="add-planner-card" class="bg-amber-600 text-white px-4 py-2 rounded-xl font-bold hover:bg-amber-700 transition text-sm flex items-center shadow-lg shadow-amber-200">
+                        <span class="mr-2">➕</span> New Card
+                    </button>
+                    <button id="export-csv" class="bg-stone-800 text-white px-4 py-2 rounded-xl font-bold hover:bg-black transition text-sm flex items-center shadow-lg shadow-stone-200">
+                        <span class="mr-2">💾</span> Save Draft (CSV)
+                    </button>
+                    <button id="import-btn" class="bg-white text-stone-800 border-2 border-stone-200 px-4 py-2 rounded-xl font-bold hover:bg-stone-50 transition text-sm flex items-center">
+                        <span class="mr-2">📂</span> Load Draft (CSV)
+                    </button>
+                    <input type="file" id="csv-input" accept=".csv" class="hidden">
+                </div>
             </div>
 
             <div class="overflow-x-auto hide-scrollbar rounded-3xl border border-stone-200 shadow-xl bg-white">
                 <div class="planner-grid min-w-[1000px]">
-                    <!-- Hour Columns -->
                     <div class="planner-header bg-stone-800 text-stone-200 uppercase tracking-widest text-[10px]">Time</div>
                     <div class="planner-header">Fri (7/31)</div>
                     <div class="planner-header">Sat (8/1)</div>
                     <div class="planner-header">Sun (8/2)</div>
                     <div class="planner-header">Mon (8/3)</div>
 
-                    <!-- Generate Hourly Rows via JS -->
                     <div id="planner-rows-container" class="contents"></div>
                 </div>
             </div>
             <div class="mt-4 p-4 bg-amber-50 rounded-2xl border border-amber-100 flex items-center text-sm text-amber-800 shadow-sm">
-                <span class="mr-3">☁️</span>
-                <p class="font-medium">Live Cloud Sync Enabled. Drag any card to move. Tap to flip and edit addresses or notes.</p>
+                <span class="mr-3">💡</span>
+                <p class="font-medium">Card positions and text edits are lost on refresh unless you click "Save Draft". Drag cards to move them between slots.</p>
             </div>
         </section>
 
@@ -470,28 +395,12 @@ Ray Ngan	3472650293</div>
     <footer class="bg-stone-900 text-stone-400 py-12 text-center text-sm border-t border-stone-800">
         <div class="max-w-6xl mx-auto px-4">
             <p class="font-bold text-stone-200 tracking-wide uppercase text-xs">Kelmen's Bachelor Blueprint | Summer 2026</p>
-            <p class="mt-4 max-w-md mx-auto text-stone-500 leading-relaxed">7 People. Elite House. Real-time Planning. Planners: Lock the pad by May.</p>
+            <p class="mt-4 max-w-md mx-auto text-stone-500 leading-relaxed">7 People. Elite House. Master Draft Mode.</p>
         </div>
     </footer>
 
-    <script type="module">
-        // Firebase Integration Logic
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, doc, addDoc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        // Global Setup
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'kb-bach-2026';
-        let user = null;
-
-        // Path Rule 1 compliant path
-        const cardsCollection = collection(db, 'artifacts', appId, 'public', 'data', 'plannerCards');
-
-        // Reactive Countdown
+    <script>
+        // Countdown
         const targetDate = new Date("July 31, 2026 15:00:00").getTime();
         function updateCountdown() {
             const now = new Date().getTime();
@@ -512,12 +421,12 @@ Ray Ngan	3472650293</div>
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
-        // Budget Logic
+        // Budget Chart
         const ctx = document.getElementById('budgetChart').getContext('2d');
         const budgetChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Lodging', 'Spend/Food'],
+                labels: ['Lodging', 'Spend'],
                 datasets: [{
                     data: [350, 600],
                     backgroundColor: ['#d97706', '#1f2937'],
@@ -529,10 +438,8 @@ Ray Ngan	3472650293</div>
                 responsive: true,
                 maintainAspectRatio: false,
                 cutout: '75%',
-                layout: { padding: 10 },
                 plugins: {
-                    legend: { display: true, position: 'bottom', labels: { font: { family: "'Outfit', sans-serif" }, usePointStyle: true } },
-                    tooltip: { backgroundColor: '#1f2937', padding: 15, cornerRadius: 12 }
+                    legend: { display: true, position: 'bottom', labels: { font: { family: "'Outfit', sans-serif" } } }
                 }
             }
         });
@@ -540,201 +447,147 @@ Ray Ngan	3472650293</div>
         function updateBudget() {
             const lodging = parseInt(document.getElementById('lodging-slider').value);
             const spend = parseInt(document.getElementById('spend-slider').value);
-            const total = lodging + spend;
-            const groupTotal = lodging * 7;
             document.getElementById('lodging-val').innerText = lodging;
             document.getElementById('spend-val').innerText = spend;
-            document.getElementById('budget-total').innerText = total;
-            document.getElementById('lodging-total-calc').innerText = groupTotal;
+            document.getElementById('budget-total').innerText = lodging + spend;
+            document.getElementById('lodging-total-calc').innerText = lodging * 7;
             budgetChart.data.datasets[0].data = [lodging, spend];
             budgetChart.update();
         }
-
         document.getElementById('lodging-slider').addEventListener('input', updateBudget);
         document.getElementById('spend-slider').addEventListener('input', updateBudget);
 
-        // Activity Filtering
-        const filterBtns = document.querySelectorAll('#activity-filters button');
-        const activityCards = document.querySelectorAll('.activity-card-container');
-        filterBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                filterBtns.forEach(b => b.classList.remove('tab-active', 'bg-stone-900', 'text-white'));
-                filterBtns.forEach(b => b.classList.add('tab-inactive', 'bg-transparent', 'text-stone-600'));
-                btn.classList.remove('tab-inactive', 'text-stone-600');
-                btn.classList.add('tab-active', 'bg-stone-900', 'text-white');
-                const filter = btn.getAttribute('data-filter');
-                activityCards.forEach(card => {
-                    if (filter === 'all' || card.classList.contains(filter)) {
-                        card.classList.remove('hide');
-                    } else {
-                        card.classList.add('hide');
-                    }
-                });
-            });
-        });
-
-        // PLANNER & CLOUD SYNC LOGIC
-        const plannerContainer = document.getElementById('planner-rows-container');
-        const hours = ["8 AM", "9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM", "6 PM", "7 PM", "8 PM", "9 PM", "10 PM", "11 PM", "12 AM"];
+        // PLANNER LOGIC
+        const hours = ["8AM", "9AM", "10AM", "11AM", "12PM", "1PM", "2PM", "3PM", "4PM", "5PM", "6PM", "7PM", "8PM", "9PM", "10PM", "11PM", "12AM"];
         const days = ["fri", "sat", "sun", "mon"];
+        const container = document.getElementById('planner-rows-container');
 
-        function buildPlannerGrid() {
+        function initGrid() {
             hours.forEach(hour => {
-                const hourCell = document.createElement('div');
-                hourCell.className = 'planner-time-col';
-                hourCell.innerText = hour;
-                plannerContainer.appendChild(hourCell);
+                const hCell = document.createElement('div');
+                hCell.className = 'planner-time-col';
+                hCell.innerText = hour;
+                container.appendChild(hCell);
 
                 days.forEach(day => {
                     const slot = document.createElement('div');
                     slot.className = 'planner-slot';
-                    slot.id = `slot-${day}-${hour.replace(' ', '')}`;
+                    slot.id = `slot-${day}-${hour}`;
                     slot.addEventListener('dragover', e => { e.preventDefault(); slot.classList.add('drag-over'); });
                     slot.addEventListener('dragleave', () => slot.classList.remove('drag-over'));
-                    slot.addEventListener('drop', (e) => handleDrop(e, slot, day, hour.replace(' ', '')));
-                    plannerContainer.appendChild(slot);
+                    slot.addEventListener('drop', handleDrop);
+                    container.appendChild(slot);
                 });
             });
         }
 
-        async function createPlannerCardInCloud(titleText, day, hour) {
-            if (!user) return;
-            try {
-                await addDoc(cardsCollection, {
-                    title: titleText,
-                    day: day,
-                    hour: hour,
-                    location: 'TBD',
-                    timeDetail: hour + ' Approx',
-                    notes: 'Add details here...',
-                    createdAt: Date.now()
-                });
-            } catch (e) {
-                console.error("Error adding card: ", e);
-            }
-        }
-
-        function createPlannerCardUI(docId, data) {
-            const slot = document.getElementById(`slot-${data.day}-${data.hour}`) || document.getElementsByClassName('planner-slot')[0];
+        function createCard(title, loc, time, notes, day, hour) {
+            const cardId = 'card-' + Math.random().toString(36).substr(2, 9);
+            const slot = document.getElementById(`slot-${day}-${hour}`) || document.querySelector('.planner-slot');
             
             const card = document.createElement('div');
             card.className = 'planner-card-container';
-            card.id = docId;
+            card.id = cardId;
             card.draggable = true;
             card.innerHTML = `
                 <div class="card-inner w-full h-full">
-                    <div class="card-front bg-white border-amber-200 border-2">
-                        <h5 class="text-[10px] font-bold text-amber-600 uppercase mb-1 px-2" contenteditable="true" data-field="title">${data.title}</h5>
-                        <p class="text-[9px] text-stone-400">Flip to Edit 🔄</p>
+                    <div class="card-front bg-white border-amber-100 border-2">
+                        <h5 class="text-[10px] font-bold text-amber-600 uppercase mb-1 px-1" contenteditable="true" data-field="title">${title}</h5>
+                        <p class="text-[8px] text-stone-300">Tap for Details 🔄</p>
                     </div>
-                    <div class="card-back text-left p-2 text-[9px] flex flex-col gap-1">
-                        <div><strong class="text-stone-400 uppercase text-[8px]">Loc/Addr:</strong> <div contenteditable="true" class="text-stone-900" data-field="location">${data.location}</div></div>
-                        <div><strong class="text-stone-400 uppercase text-[8px]">Time Detail:</strong> <div contenteditable="true" class="text-stone-900" data-field="timeDetail">${data.timeDetail}</div></div>
-                        <div><strong class="text-stone-400 uppercase text-[8px]">Notes:</strong> <div contenteditable="true" class="text-stone-900 italic" data-field="notes">${data.notes}</div></div>
-                        <button class="delete-btn mt-1 text-red-500 font-bold uppercase text-[7px] text-right">Delete ❌</button>
+                    <div class="card-back text-left p-2 text-[9px] flex flex-col gap-1 overflow-y-auto">
+                        <div class="border-b border-stone-100 pb-1"><strong class="text-stone-400 uppercase text-[7px]">Loc:</strong> <div contenteditable="true" class="text-stone-900 font-bold" data-field="loc">${loc}</div></div>
+                        <div class="border-b border-stone-100 pb-1"><strong class="text-stone-400 uppercase text-[7px]">Time:</strong> <div contenteditable="true" class="text-stone-900" data-field="time">${time}</div></div>
+                        <div><strong class="text-stone-400 uppercase text-[7px]">Notes:</strong> <div contenteditable="true" class="text-stone-700 italic leading-tight" data-field="notes">${notes}</div></div>
+                        <button onclick="this.closest('.planner-card-container').remove()" class="mt-auto text-red-400 font-bold uppercase text-[7px] text-right pt-1">Delete</button>
                     </div>
                 </div>
             `;
 
-            // Drag behavior
-            card.addEventListener('dragstart', e => {
-                e.dataTransfer.setData('text/plain', docId);
-                setTimeout(() => card.classList.add('opacity-50'), 0);
-            });
-            card.addEventListener('dragend', () => card.classList.remove('opacity-50'));
-            
-            // Flip behavior
+            card.addEventListener('dragstart', e => { e.dataTransfer.setData('text/plain', card.id); setTimeout(() => card.classList.add('opacity-40'), 0); });
+            card.addEventListener('dragend', () => card.classList.remove('opacity-40'));
             card.addEventListener('click', (e) => {
-                if (e.target.hasAttribute('contenteditable') || e.target.classList.contains('delete-btn')) return;
+                if (e.target.hasAttribute('contenteditable') || e.target.tagName === 'BUTTON') return;
                 card.querySelector('.card-inner').classList.toggle('flipped');
             });
-
-            // Save on change (using blur to capture edits)
-            card.querySelectorAll('[contenteditable]').forEach(el => {
-                el.addEventListener('blur', async () => {
-                    const field = el.getAttribute('data-field');
-                    const value = el.innerText;
-                    if (!user) return;
-                    await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'plannerCards', docId), {
-                        [field]: value
-                    });
-                });
-                // Prevent bubbling to keep card from flipping/dragging during typing
-                el.addEventListener('click', e => e.stopPropagation());
-            });
-
-            // Delete behavior
-            card.querySelector('.delete-btn').addEventListener('click', async (e) => {
-                e.stopPropagation();
-                if (!user) return;
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'plannerCards', docId));
-            });
-
             slot.appendChild(card);
         }
 
-        async function handleDrop(e, slot, day, hour) {
+        function handleDrop(e) {
             e.preventDefault();
-            slot.classList.remove('drag-over');
-            const docId = e.dataTransfer.getData('text/plain');
-            if (!user) return;
-            
-            try {
-                await updateDoc(doc(db, 'artifacts', appId, 'public', 'data', 'plannerCards', docId), {
-                    day: day,
-                    hour: hour
-                });
-            } catch (err) {
-                console.error("Drop save failed", err);
-            }
+            this.classList.remove('drag-over');
+            const cardId = e.dataTransfer.getData('text/plain');
+            const card = document.getElementById(cardId);
+            if (card) this.appendChild(card);
         }
 
-        // Initialize Firebase Auth and Real-time Listeners
-        const initCloudSession = async () => {
-            // Rule 3: Auth First
-            try {
-                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                    await signInWithCustomToken(auth, __initial_auth_token);
-                } else {
-                    await signInAnonymously(auth);
-                }
-            } catch (err) {
-                console.error("Auth failed:", err);
-            }
+        // CSV EXPORT
+        function exportCSV() {
+            const cards = document.querySelectorAll('.planner-card-container');
+            let csv = "Title,Location,TimeDetail,Notes,Day,Hour\n";
+            
+            cards.forEach(card => {
+                const title = card.querySelector('[data-field="title"]').innerText.replace(/,/g, " ");
+                const loc = card.querySelector('[data-field="loc"]').innerText.replace(/,/g, " ");
+                const time = card.querySelector('[data-field="time"]').innerText.replace(/,/g, " ");
+                const notes = card.querySelector('[data-field="notes"]').innerText.replace(/,/g, " ").replace(/\n/g, " ");
+                const slotId = card.parentElement.id.split('-');
+                const day = slotId[1];
+                const hour = slotId[2];
+                csv += `"${title}","${loc}","${time}","${notes}","${day}","${hour}"\n`;
+            });
 
-            onAuthStateChanged(auth, (u) => {
-                user = u;
-                if (!user) return;
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', 'kelmens_bach_draft.csv');
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
 
-                // Sync UI with Firestore
-                onSnapshot(cardsCollection, (snapshot) => {
-                    // Clear existing planner cards in UI (not the slots)
-                    document.querySelectorAll('.planner-card-container').forEach(c => c.remove());
-                    
-                    snapshot.forEach((doc) => {
-                        createPlannerCardUI(doc.id, doc.data());
-                    });
-                }, (error) => {
-                    console.error("Planner sync error:", error);
+        // CSV IMPORT
+        function importCSV(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const text = event.target.result;
+                const rows = text.split('\n').slice(1);
+                document.querySelectorAll('.planner-card-container').forEach(c => c.remove());
+                
+                rows.forEach(row => {
+                    const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                    if (cols && cols.length >= 6) {
+                        const title = cols[0].replace(/"/g, '');
+                        const loc = cols[1].replace(/"/g, '');
+                        const time = cols[2].replace(/"/g, '');
+                        const notes = cols[3].replace(/"/g, '');
+                        const day = cols[4].replace(/"/g, '');
+                        const hour = cols[5].replace(/"/g, '');
+                        createCard(title, loc, time, notes, day, hour);
+                    }
                 });
-            });
-        };
+            };
+            reader.readAsText(file);
+        }
 
-        // UI Setup and Kickoff
-        buildPlannerGrid();
-        initCloudSession();
+        document.getElementById('export-csv').addEventListener('click', exportCSV);
+        document.getElementById('import-btn').addEventListener('click', () => document.getElementById('csv-input').click());
+        document.getElementById('csv-input').addEventListener('change', importCSV);
+        document.getElementById('add-planner-card').addEventListener('click', () => createCard('New Activity', 'TBD', '8AM Approx', 'Notes...', 'fri', '8AM'));
 
-        document.getElementById('add-planner-card').addEventListener('click', () => {
-            createPlannerCardInCloud('New Activity', 'fri', '8AM');
-        });
+        initGrid();
+        // Starters
+        createCard('Arrival & House Party', 'Airbnb', '4PM', 'BBQ and Tacos Kickoff', 'fri', '4PM');
+        createCard('Adrenaline Morning', 'Tahoe/SLO Trails', '10AM', 'ATV session', 'sat', '10AM');
 
-        // Global prevent default for flip/click conflicts
-        document.querySelectorAll('.card-inner, .activity-card-container .card-inner').forEach(inner => {
-            inner.addEventListener('click', (e) => {
-                if (e.target.tagName === 'A' || e.target.hasAttribute('contenteditable')) e.stopPropagation();
-            });
-        });
-
+        // Prevent accidental flips during text entry
+        document.addEventListener('click', e => {
+            if (e.target.hasAttribute('contenteditable')) e.stopPropagation();
+        }, true);
     </script>
 </body>
 </html>
