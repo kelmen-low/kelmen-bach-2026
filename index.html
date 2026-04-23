@@ -2,7 +2,7 @@
 <!-- Application Structure Plan: The SPA is a dashboard designed for a party of 7. It prioritizes the "Squad" section using 3D interactive flip cards. The "Damage" section is fully interactive with sliders. Finally, the "Planner's Master Draft" section has been upgraded to a Google Calendar-style interactive grid. Cards are now resizable (spanning multiple hours), and clicking them opens a large-scale editing overlay. Data management uses local CSV export/import for portability. -->
 <!-- Visualization & Content Choices: 
      1. Reactive Countdown: Vanilla JS updates every second.
-     2. Squad Cards: CSS 3D transforms for affiliation and contact info. 
+     2. Squad Cards: CSS 3D transforms reveal affiliation and contact info. 
      3. Summary Card: Specifically formatted text for Excel migration.
      4. Dynamic Budget: Chart.js instance linked to range inputs. 
      5. Advanced Planner's Grid: Uses absolute positioning within day-columns to allow spanning hours. Includes a custom resize handle and a central editing modal. 
@@ -209,7 +209,6 @@
                 <p class="text-stone-600 max-w-2xl">The lineup for Summer 2026. Tap any card below to reveal contact details.</p>
             </div>
             <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-                <!-- Squad Cards omitted for brevity in response logic, restored in final file -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-white"><div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-amber-100 text-xl">👑</div><h3 class="text-xl font-bold">Kelmen</h3><span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span></div><div class="card-back bg-amber-50"><p class="text-sm font-bold text-amber-800 mb-1">The Groom</p><a href="tel:9256405618" class="text-amber-600 font-mono text-sm block underline">📱 (925) 640-5618</a></div></div></div>
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-white"><div class="w-12 h-8 rounded shadow-sm mb-3 logo-malaysia"></div><h3 class="text-xl font-bold">Shane Low</h3><span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span></div><div class="card-back"><p class="text-sm font-bold text-stone-700 mb-1">Head Planner</p><a href="tel:9252705245" class="text-amber-600 font-mono text-sm block underline">📱 (925) 270-5245</a></div></div></div>
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')"><div class="card-inner"><div class="card-front bg-white"><div class="w-12 h-8 rounded shadow-sm mb-3 logo-malaysia"></div><h3 class="text-xl font-bold">Kevin Low</h3><span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span></div><div class="card-back"><p class="text-sm font-bold text-stone-700 mb-1">Brother</p><span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span></div></div></div>
@@ -248,7 +247,7 @@ Ray Ngan	3472650293</div></div></div></div>
             <div class="mb-10 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
                 <div class="text-center md:text-left">
                     <h2 class="text-3xl font-bold text-stone-900 mb-4">The Planner’s Master Draft</h2>
-                    <p class="text-stone-600 max-w-2xl">Shane & Kevin: Drag tiles to move times. Drag the bottom of a tile to span multiple hours. Click to expand and edit full details.</p>
+                    <p class="text-stone-600 max-w-2xl">Shane & Kevin: Drag tiles to move times. Drag the bottom handle to span multiple hours. Click any card to expand and edit full details.</p>
                 </div>
                 <div class="flex flex-wrap gap-3">
                     <button id="add-planner-card" class="bg-amber-600 text-white px-6 py-3 rounded-2xl font-bold hover:bg-amber-700 transition text-sm flex items-center shadow-lg shadow-amber-200">
@@ -365,10 +364,10 @@ Ray Ngan	3472650293</div></div></div></div>
         }
 
         // --- CARD FACTORY ---
-        let plannerData = {}; // Store raw data for cards
+        let plannerData = {}; 
 
         function createPlannerCard(id, title, loc, startTimeIdx, duration, notes, day) {
-            const cardId = id || 'card-' + Date.now();
+            const cardId = id || 'card-' + Date.now() + '-' + Math.floor(Math.random()*1000);
             plannerData[cardId] = { title, loc, startTimeIdx, duration, notes, day };
             
             const col = document.getElementById(`col-${day}`);
@@ -381,17 +380,16 @@ Ray Ngan	3472650293</div></div></div></div>
 
             card.innerHTML = `
                 <div class="pointer-events-none">
-                    <h5 class="text-sm font-black text-stone-900 leading-tight truncate mb-1">${title}</h5>
+                    <h5 class="text-sm font-black text-stone-900 leading-tight truncate mb-1">${title || 'Untitled'}</h5>
                     <div class="flex items-center text-[10px] text-amber-600 font-bold uppercase gap-1">
-                        <span>${HOURS[Math.floor(startTimeIdx)]}</span>
+                        <span class="card-time-label">${HOURS[Math.floor(startTimeIdx)] || 'TBD'}</span>
                         <span>•</span>
-                        <span>${duration}h</span>
+                        <span class="card-dur-label">${duration}h</span>
                     </div>
                 </div>
                 <div class="resize-handle"></div>
             `;
 
-            // Card Listeners
             card.addEventListener('dragstart', e => {
                 if (isResizing) { e.preventDefault(); return; }
                 e.dataTransfer.setData('text/plain', cardId);
@@ -402,7 +400,6 @@ Ray Ngan	3472650293</div></div></div></div>
                 openEditModal(cardId);
             });
 
-            // Resize Logic
             const handle = card.querySelector('.resize-handle');
             handle.addEventListener('mousedown', (e) => {
                 e.stopPropagation();
@@ -416,7 +413,7 @@ Ray Ngan	3472650293</div></div></div></div>
                     const newDuration = Math.round((newHeight / HOUR_HEIGHT) * 2) / 2;
                     plannerData[cardId].duration = newDuration;
                     updateCardPosition(card, plannerData[cardId].startTimeIdx, newDuration);
-                    card.querySelector('span:last-child').innerText = newDuration + 'h';
+                    card.querySelector('.card-dur-label').innerText = newDuration + 'h';
                 }
 
                 function onMouseUp() {
@@ -438,7 +435,6 @@ Ray Ngan	3472650293</div></div></div></div>
             cardElement.style.height = (duration * HOUR_HEIGHT) + 'px';
         }
 
-        // --- DRAG & DROP ---
         window.drop = function(e, day) {
             e.preventDefault();
             const id = e.dataTransfer.getData('text/plain');
@@ -446,7 +442,7 @@ Ray Ngan	3472650293</div></div></div></div>
             if (!card) return;
 
             const rect = e.currentTarget.getBoundingClientRect();
-            const y = e.clientY - rect.top - 48; // Adjust for header offset
+            const y = e.clientY - rect.top - 48; 
             const newStartIdx = Math.max(0, Math.round((y / HOUR_HEIGHT) * 2) / 2);
             
             plannerData[id].day = day;
@@ -454,18 +450,17 @@ Ray Ngan	3472650293</div></div></div></div>
             
             e.currentTarget.appendChild(card);
             updateCardPosition(card, newStartIdx, plannerData[id].duration);
-            card.querySelector('span:first-child').innerText = HOURS[Math.floor(newStartIdx)] || "TBD";
+            card.querySelector('.card-time-label').innerText = HOURS[Math.floor(newStartIdx)] || "TBD";
         };
 
-        // --- MODAL CONTROLS ---
         function openEditModal(id) {
             activeCardId = id;
             const data = plannerData[id];
-            document.getElementById('modal-title').value = data.title;
-            document.getElementById('modal-loc').value = data.loc;
+            document.getElementById('modal-title').value = data.title || "";
+            document.getElementById('modal-loc').value = data.loc || "";
             document.getElementById('modal-hour').value = Math.floor(data.startTimeIdx);
             document.getElementById('modal-duration').value = data.duration;
-            document.getElementById('modal-notes').value = data.notes;
+            document.getElementById('modal-notes').value = data.notes || "";
             document.getElementById('edit-modal').classList.remove('hidden');
         }
 
@@ -480,9 +475,9 @@ Ray Ngan	3472650293</div></div></div></div>
             data.notes = document.getElementById('modal-notes').value;
 
             const card = document.getElementById(activeCardId);
-            card.querySelector('h5').innerText = data.title;
-            card.querySelector('span:first-child').innerText = HOURS[data.startTimeIdx];
-            card.querySelector('span:last-child').innerText = data.duration + 'h';
+            card.querySelector('h5').innerText = data.title || 'Untitled';
+            card.querySelector('.card-time-label').innerText = HOURS[data.startTimeIdx] || 'TBD';
+            card.querySelector('.card-dur-label').innerText = data.duration + 'h';
             updateCardPosition(card, data.startTimeIdx, data.duration);
             
             document.getElementById('edit-modal').classList.add('hidden');
@@ -494,41 +489,104 @@ Ray Ngan	3472650293</div></div></div></div>
             document.getElementById('edit-modal').classList.add('hidden');
         };
 
-        // --- CSV SYNC ---
+        // --- IMPROVED CSV LOGIC ---
+        // Robust CSV field escaping
+        const escapeCSV = (val) => {
+            if (val === undefined || val === null) return '""';
+            const str = String(val).replace(/"/g, '""'); // Double up quotes for CSV escaping
+            return `"${str}"`;
+        };
+
+        // Custom parser to handle quotes and commas correctly
+        const parseCSVLine = (line) => {
+            const result = [];
+            let current = '';
+            let inQuotes = false;
+            for (let i = 0; i < line.length; i++) {
+                const char = line[i];
+                if (char === '"') {
+                    if (inQuotes && line[i + 1] === '"') {
+                        current += '"';
+                        i++; // Skip double quote
+                    } else {
+                        inQuotes = !inQuotes;
+                    }
+                } else if (char === ',' && !inQuotes) {
+                    result.push(current);
+                    current = '';
+                } else {
+                    current += char;
+                }
+            }
+            result.push(current);
+            return result;
+        };
+
         document.getElementById('export-csv').onclick = () => {
             let csv = "ID,Title,Location,StartTimeIdx,Duration,Notes,Day\n";
             Object.keys(plannerData).forEach(id => {
                 const d = plannerData[id];
-                csv += `"${id}","${d.title}","${d.loc}",${d.startTimeIdx},${d.duration},"${d.notes.replace(/\n/g, ' ')}","${d.day}"\n`;
+                csv += `${escapeCSV(id)},${escapeCSV(d.title)},${escapeCSV(d.loc)},${d.startTimeIdx},${d.duration},${escapeCSV(d.notes)},${escapeCSV(d.day)}\n`;
             });
-            const blob = new Blob([csv], { type: 'text/csv' });
+            const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'kelmens_bach_draft.csv';
+            a.download = 'kelmens_bach_draft_2026.csv';
             a.click();
         };
 
         document.getElementById('import-btn').onclick = () => document.getElementById('csv-input').click();
+        
         document.getElementById('csv-input').onchange = (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
             const reader = new FileReader();
             reader.onload = function(event) {
-                document.querySelectorAll('.planner-card').forEach(c => c.remove());
-                plannerData = {};
-                const rows = event.target.result.split('\n').slice(1);
-                rows.forEach(row => {
-                    const c = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                    if (c && c.length >= 7) {
-                        createPlannerCard(c[0].replace(/"/g,''), c[1].replace(/"/g,''), c[2].replace(/"/g,''), parseFloat(c[3]), parseFloat(c[4]), c[5].replace(/"/g,''), c[6].replace(/"/g,''));
-                    }
-                });
+                try {
+                    // Clear current board
+                    document.querySelectorAll('.planner-card').forEach(c => c.remove());
+                    plannerData = {};
+
+                    const text = event.target.result;
+                    const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+                    
+                    // Skip header
+                    const dataLines = lines.slice(1);
+                    
+                    dataLines.forEach(line => {
+                        const cols = parseCSVLine(line);
+                        if (cols.length >= 7) {
+                            const id = cols[0];
+                            const title = cols[1];
+                            const loc = cols[2];
+                            const startIdx = parseFloat(cols[3]);
+                            const dur = parseFloat(cols[4]);
+                            const notes = cols[5];
+                            const day = cols[6];
+                            
+                            if (!isNaN(startIdx) && !isNaN(dur)) {
+                                createPlannerCard(id, title, loc, startIdx, dur, notes, day);
+                            }
+                        }
+                    });
+                } catch (err) {
+                    console.error("CSV Parse Error", err);
+                } finally {
+                    // Reset input so user can re-upload same file
+                    e.target.value = '';
+                }
             };
-            reader.readAsText(e.target.files[0]);
+            reader.readAsText(file);
         };
 
         // --- INITIALIZATION ---
         initPlannerUI();
-        document.getElementById('add-planner-card').onclick = () => createPlannerCard(null, 'New Event', 'TBD', 0, 1, '', 'fri');
+        document.getElementById('add-planner-card').onclick = () => {
+            const id = createPlannerCard(null, 'New Activity', 'TBD', 0, 1, '', 'fri');
+            openEditModal(id);
+        };
 
         // Initial Sample Events
         createPlannerCard('card-1', 'Arrival & Tacos', 'Airbnb', 7, 3, 'Kickoff dinner + board games', 'fri');
