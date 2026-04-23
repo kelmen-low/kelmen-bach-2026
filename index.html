@@ -1,3 +1,13 @@
+<!-- Chosen Palette: Warm Neutrals with Nature Accents (Stone, Goldenrod, Matcha Green, Espresso Brown) -->
+<!-- Application Structure Plan: The SPA is a dashboard designed for a party of 7. It prioritizes the "Squad" section using 3D interactive flip cards to manage member information, including a new "Summary" card for Excel data extraction. The "Damage" section is now fully interactive, allowing users to manipulate sliders to see how budget changes affect the total. The "Pad & Play" section maintains a filterable masonry-style grid of flip cards. -->
+<!-- Visualization & Content Choices: 
+     1. Reactive Countdown: Vanilla JS updates a multi-unit display every second.
+     2. Squad Cards: CSS 3D transforms reveal affiliation and contact info. 
+     3. Summary Card: Specifically formatted text on the back of a flip card to facilitate data migration to spreadsheets.
+     4. Dynamic Budget: Chart.js instance linked to range inputs for live data manipulation. 
+     5. Activity Grid: State-based filter system for trip components. -->
+<!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -8,33 +18,27 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
     
-    <!-- Chosen Palette: Warm Neutrals with Nature Accents (Stone, Goldenrod, Matcha Green, Espresso Brown) -->
-    <!-- Application Structure Plan: The SPA is a dashboard designed for a group of 8. It prioritizes the "Squad" section by adding interactive flipping cards. The front shows names and logos, while the back reveals roles and contact info. The budget and activity pool follow to provide a full operational overview. Activities are also interactive flip cards to maximize space and engagement. -->
-    <!-- Visualization & Content Choices: 
-         1. Interactive Flip Cards: Built with CSS 3D transforms. Applied to both Squad and Activity sections for consistency.
-         2. Custom CSS Icons: Created "badges" using Tailwind and Unicode for Genentech (G), Badminton (🏸), and Malaysia (🌙⭐ + Stripes).
-         3. Budget Donut: Chart.js visualization of the $950 goal. -->
-    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
-
     <style>
         body { font-family: 'Outfit', sans-serif; }
         html { scroll-behavior: smooth; }
+        
         .chart-container {
             position: relative;
             width: 100%;
-            max-width: 500px;
+            max-width: 450px;
             margin-left: auto;
             margin-right: auto;
-            height: 350px;
+            height: 320px;
             max-height: 400px;
         }
+
         .hide { display: none !important; }
         .tab-active { border-bottom: 2px solid #1f2937; font-weight: 600; color: #1f2937; }
         .tab-inactive { border-bottom: 2px solid transparent; color: #6b7280; }
         .hide-scrollbar::-webkit-scrollbar { display: none; }
         .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 
-        /* Custom "Logos" without SVGs */
+        /* Custom affiliation logos using CSS and Unicode */
         .logo-genentech {
             background: linear-gradient(135deg, #0055b8 50%, #ffffff 50%);
             display: flex; align-items: center; justify-content: center;
@@ -60,9 +64,10 @@
             display: flex; align-items: center; justify-content: center;
         }
 
-        /* Flip Card CSS */
-        .card-container { perspective: 1000px; cursor: pointer; height: 180px; }
-        .activity-card-container { perspective: 1000px; cursor: pointer; height: 200px; }
+        /* 3D Flip Card Logic */
+        .card-container, .activity-card-container { perspective: 1000px; cursor: pointer; }
+        .card-container { height: 180px; }
+        .activity-card-container { height: 210px; }
         
         .card-inner {
             position: relative; width: 100%; height: 100%;
@@ -74,10 +79,16 @@
             position: absolute; width: 100%; height: 100%;
             backface-visibility: hidden; -webkit-backface-visibility: hidden;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            border-radius: 0.75rem; border: 1px solid #e7e5e4;
-            padding: 1.5rem;
+            border-radius: 1rem; border: 1px solid #e7e5e4;
+            padding: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.05);
         }
-        .card-back { transform: rotateY(180deg); background-color: #fafaf9; }
+        .card-back { transform: rotateY(180deg); background-color: #fafaf9; overflow-y: auto; }
+
+        /* Range Input Styling */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%; background: #d97706; cursor: pointer; margin-top: -7px; border: 2px solid #fff; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 6px; cursor: pointer; background: #e7e5e4; border-radius: 3px; }
     </style>
 </head>
 <body class="bg-[#faf9f6] text-stone-800 antialiased">
@@ -95,6 +106,7 @@
         </div>
     </nav>
 
+    <!-- Header Section with Interactive Countdown -->
     <header id="hero" class="pt-32 pb-20 px-4 text-center border-b border-stone-200">
         <div class="max-w-3xl mx-auto">
             <div class="text-4xl mb-4">💍🥂🎲</div>
@@ -102,15 +114,24 @@
             <p class="text-xl text-stone-600 mb-8 font-light">Friday, July 31 – Monday, Aug 3, 2026 📍 Tahoe or SLO</p>
             
             <div class="inline-flex flex-col bg-white p-6 rounded-2xl shadow-sm border border-stone-100">
-                <span class="text-sm uppercase tracking-widest text-stone-400 font-bold mb-2">Countdown to Liftoff</span>
-                <div class="flex space-x-4 text-center justify-center">
-                    <div class="flex flex-col"><span id="cd-days" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Days</span></div>
-                    <div class="text-3xl font-bold text-stone-300">:</div>
-                    <div class="flex flex-col"><span id="cd-hours" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Hrs</span></div>
-                    <div class="text-3xl font-bold text-stone-300">:</div>
-                    <div class="flex flex-col"><span id="cd-mins" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Mins</span></div>
-                    <div class="text-3xl font-bold text-stone-300">:</div>
-                    <div class="flex flex-col"><span id="cd-secs" class="text-3xl font-bold text-amber-600 w-12">00</span><span class="text-xs text-stone-500">Secs</span></div>
+                <span class="text-sm uppercase tracking-widest text-stone-400 font-bold mb-3 block">Countdown to Celebration</span>
+                <div class="grid grid-cols-4 gap-2 sm:gap-4 text-center justify-center">
+                    <div class="flex flex-col bg-stone-50 p-2 rounded-lg min-w-[60px]">
+                        <span id="cd-days" class="text-2xl sm:text-3xl font-bold text-amber-600">00</span>
+                        <span class="text-[10px] text-stone-500 uppercase">Days</span>
+                    </div>
+                    <div class="flex flex-col bg-stone-50 p-2 rounded-lg min-w-[60px]">
+                        <span id="cd-hours" class="text-2xl sm:text-3xl font-bold text-amber-600">00</span>
+                        <span class="text-[10px] text-stone-500 uppercase">Hrs</span>
+                    </div>
+                    <div class="flex flex-col bg-stone-50 p-2 rounded-lg min-w-[60px]">
+                        <span id="cd-mins" class="text-2xl sm:text-3xl font-bold text-amber-600">00</span>
+                        <span class="text-[10px] text-stone-500 uppercase">Mins</span>
+                    </div>
+                    <div class="flex flex-col bg-stone-50 p-2 rounded-lg min-w-[60px]">
+                        <span id="cd-secs" class="text-2xl sm:text-3xl font-bold text-amber-600">00</span>
+                        <span class="text-[10px] text-stone-500 uppercase">Secs</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -118,13 +139,15 @@
 
     <main class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-24">
 
+        <!-- Squad Directory Section -->
         <section id="squad" class="scroll-mt-24">
             <div class="mb-10 text-center md:text-left">
-                <h2 class="text-3xl font-bold text-stone-900 mb-4">The Squad (8 Total)</h2>
-                <p class="text-stone-600 max-w-2xl">The core crew. Click a card to reveal affiliation, role, and contact info.</p>
+                <h2 class="text-3xl font-bold text-stone-900 mb-4">The Squad (7 Total)</h2>
+                <p class="text-stone-600 max-w-2xl">The lineup for Summer 2026. Tap any card below to reveal info. The final card provides a clean list for Excel copy-pasting.</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-                <!-- Kelmen -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                
+                <!-- Card: Kelmen -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -134,11 +157,12 @@
                         </div>
                         <div class="card-back bg-amber-50">
                             <p class="text-sm font-bold text-amber-800 mb-1">The Groom</p>
-                            <a href="tel:9256405618" class="text-amber-600 font-mono text-sm block">📱 (925) 640-5618</a>
+                            <a href="tel:9256405618" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (925) 640-5618</a>
                         </div>
                     </div>
                 </div>
-                <!-- Shane Low -->
+
+                <!-- Card: Shane -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -148,12 +172,13 @@
                         </div>
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Head Planner</p>
-                            <p class="text-xs text-stone-500 mb-2">Malaysia</p>
-                            <a href="tel:9252705245" class="text-amber-600 font-mono text-sm block">📱 (925) 270-5245</a>
+                            <p class="text-xs text-stone-500 mb-2 font-medium">Malaysia</p>
+                            <a href="tel:9252705245" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (925) 270-5245</a>
                         </div>
                     </div>
                 </div>
-                <!-- Kevin Low -->
+
+                <!-- Card: Kevin -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -163,27 +188,29 @@
                         </div>
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Brother</p>
-                            <p class="text-xs text-stone-500 mb-2">Malaysia</p>
+                            <p class="text-xs text-stone-500 mb-2 font-medium">Malaysia</p>
                             <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
                         </div>
                     </div>
                 </div>
-                <!-- Matthew Manalastas -->
+
+                <!-- Card: Matthew -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
                             <div class="w-10 h-10 rounded-full shadow-sm mb-3 logo-genentech">G</div>
-                            <h3 class="text-xl font-bold">Matthew Manalastas</h3>
+                            <h3 class="text-xl font-bold">Matthew</h3>
                             <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
                         </div>
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Groomsman</p>
-                            <p class="text-xs text-stone-500 mb-2">Genentech</p>
-                            <a href="tel:5109196948" class="text-amber-600 font-mono text-sm block">📱 (510) 919-6948</a>
+                            <p class="text-xs text-stone-500 mb-2 font-medium">Genentech</p>
+                            <a href="tel:5109196948" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (510) 919-6948</a>
                         </div>
                     </div>
                 </div>
-                <!-- Anjo Cordero -->
+
+                <!-- Card: Anjo -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -193,12 +220,13 @@
                         </div>
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Groomsman</p>
-                            <p class="text-xs text-stone-500 mb-2">Badminton</p>
-                            <a href="tel:5107714623" class="text-amber-600 font-mono text-sm block">📱 (510) 771-4623</a>
+                            <p class="text-xs text-stone-500 mb-2 font-medium">Badminton</p>
+                            <a href="tel:5107714623" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (510) 771-4623</a>
                         </div>
                     </div>
                 </div>
-                <!-- Preston Jung -->
+
+                <!-- Card: Preston -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -208,12 +236,13 @@
                         </div>
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
-                            <p class="text-xs text-stone-500 mb-2">UC Davis</p>
-                            <a href="tel:9258589319" class="text-amber-600 font-mono text-sm block">📱 (925) 858-9319</a>
+                            <p class="text-xs text-stone-500 mb-2 font-medium">UC Davis</p>
+                            <a href="tel:9258589319" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (925) 858-9319</a>
                         </div>
                     </div>
                 </div>
-                <!-- Ray Ngan -->
+
+                <!-- Card: Ray -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
                         <div class="card-front bg-white">
@@ -223,47 +252,69 @@
                         </div>
                         <div class="card-back">
                             <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
-                            <p class="text-xs text-stone-500 mb-2">Badminton</p>
-                            <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                            <p class="text-xs text-stone-500 mb-2 font-medium">Badminton</p>
+                            <a href="tel:3472650293" class="text-amber-600 font-mono text-sm block underline decoration-amber-200">📱 (347) 265-0293</a>
                         </div>
                     </div>
                 </div>
-                <!-- Tristen -->
+
+                <!-- Card: Summary (NEW) -->
                 <div class="card-container" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <div class="w-10 h-10 rounded-full shadow-sm mb-3 logo-genentech">G</div>
-                            <h3 class="text-xl font-bold">Tristen</h3>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap to Flip 🔄</span>
+                        <div class="card-front bg-stone-800 text-stone-100">
+                            <div class="w-10 h-10 rounded shadow-sm mb-3 flex items-center justify-center bg-stone-700 text-xl">📋</div>
+                            <h3 class="text-xl font-bold">Squad Summary</h3>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-400 mt-2">Tap for Excel List 🔄</span>
                         </div>
-                        <div class="card-back">
-                            <p class="text-sm font-bold text-stone-700 mb-1">Crew</p>
-                            <p class="text-xs text-stone-500 mb-2">Genentech</p>
-                            <span class="text-stone-400 font-mono text-sm block">📱 [N/A]</span>
+                        <div class="card-back text-left items-start justify-start p-4">
+                            <p class="text-[10px] font-bold text-stone-400 uppercase mb-2 border-b w-full">Copy-Paste for Excel</p>
+                            <div class="text-[11px] font-mono leading-tight whitespace-pre text-stone-700" id="excel-summary">Kelmen	9256405618
+Shane Low	9252705245
+Kevin Low	N/A
+Matthew	5109196948
+Anjo Cordero	5107714623
+Preston Jung	9258589319
+Ray Ngan	3472650293</div>
                         </div>
                     </div>
                 </div>
+
             </div>
         </section>
 
+        <!-- Financial Breakdown Section (ADJUSTABLE) -->
         <section id="budget" class="scroll-mt-24">
-            <div class="flex flex-col md:flex-row gap-12 items-center">
-                <div class="md:w-1/2">
-                    <h2 class="text-3xl font-bold text-stone-900 mb-4">The Damage (Budget)</h2>
-                    <p class="text-stone-600 mb-6">Targeting ~$950 per person for the group of 8. This covers our premium Airbnb, food, and high-energy adrenaline activities throughout the weekend.</p>
+            <div class="flex flex-col lg:flex-row gap-12 items-center">
+                <div class="lg:w-1/2">
+                    <h2 class="text-3xl font-bold text-stone-900 mb-4">The Damage (Adjustable)</h2>
+                    <p class="text-stone-600 mb-8">Use the sliders below to adjust the estimated costs. The chart and per-person total will update automatically to reflect your planning choices.</p>
                     
-                    <div class="bg-stone-100 p-6 rounded-xl border border-stone-200">
-                        <div class="flex justify-between items-center mb-4 border-b border-stone-200 pb-4">
-                            <span class="font-bold text-stone-700">Per Person Goal</span>
-                            <span class="text-2xl font-black text-amber-600">~$950 <span class="text-sm text-stone-500 font-normal">/person</span></span>
+                    <div class="space-y-8 bg-white p-8 rounded-3xl border border-stone-200 shadow-sm">
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-bold text-stone-600 uppercase tracking-wider">🏠 Lodging Estimate</label>
+                                <span class="text-lg font-black text-stone-900">$<span id="lodging-val">350</span></span>
+                            </div>
+                            <input type="range" id="lodging-slider" min="200" max="600" step="10" value="350">
+                            <p class="text-[10px] text-stone-400">Total group lodging: $<span id="lodging-total-calc">2450</span></p>
                         </div>
-                        <ul class="space-y-3 text-sm">
-                            <li class="flex justify-between"><span class="flex items-center">🏠 Lodging (Avg)</span> <span class="font-bold">$350</span></li>
-                            <li class="flex justify-between"><span class="flex items-center">🍔 Spend (Food/Fun)</span> <span class="font-bold">$600</span></li>
-                        </ul>
+
+                        <div class="space-y-3">
+                            <div class="flex justify-between items-center">
+                                <label class="text-sm font-bold text-stone-600 uppercase tracking-wider">🍔 Spend Estimate</label>
+                                <span class="text-lg font-black text-stone-900">$<span id="spend-val">600</span></span>
+                            </div>
+                            <input type="range" id="spend-slider" min="300" max="1000" step="25" value="600">
+                            <p class="text-[10px] text-stone-400">Meals, Drinks, Adrenaline, etc.</p>
+                        </div>
+
+                        <div class="pt-6 border-t border-stone-100 flex justify-between items-center">
+                            <span class="font-bold text-stone-700 uppercase tracking-tight text-xs">Updated Target Per Person</span>
+                            <span class="text-4xl font-black text-amber-600">$<span id="budget-total">950</span></span>
+                        </div>
                     </div>
                 </div>
-                <div class="md:w-1/2 w-full">
+                <div class="lg:w-1/2 w-full">
                     <div class="chart-container">
                         <canvas id="budgetChart"></canvas>
                     </div>
@@ -271,188 +322,185 @@
             </div>
         </section>
 
+        <!-- Pad & Activity Pool Section -->
         <section id="pad" class="scroll-mt-24">
             <div class="mb-10">
                 <h2 class="text-3xl font-bold text-stone-900 mb-4">The Pad & The Play</h2>
-                <p class="text-stone-600 max-w-3xl">With a squad of 8, the house setup is key. We need massive table space for games and the ultimate recovery amenities. Tap activity cards to see more info.</p>
+                <p class="text-stone-600 max-w-3xl">With a crew of 7, we are prioritizing a "Stay-In" house culture. The environment needs to be elite to support long game marathons and recovery.</p>
             </div>
 
-            <div class="bg-stone-900 text-stone-50 p-8 rounded-2xl mb-12 shadow-lg">
-                <h3 class="text-xl font-bold mb-6 text-amber-400">🏠 Airbnb Requirements (for 8 People)</h3>
-                <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <!-- Airbnb Requirements -->
+            <div class="bg-stone-900 text-stone-50 p-8 rounded-3xl mb-12 shadow-xl border border-stone-800">
+                <h3 class="text-xl font-bold mb-6 text-amber-400 flex items-center">
+                    <span class="mr-3">🏠</span> Airbnb Non-Negotiables
+                </h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">🪑</span>
                         <div>
-                            <h4 class="font-bold">Massive Table</h4>
-                            <p class="text-stone-400 text-sm">Must comfortably seat all 8 for long game marathons.</p>
+                            <h4 class="font-bold text-stone-100">Massive Table</h4>
+                            <p class="text-stone-400 text-xs mt-1 leading-relaxed">Required to seat all 7 for multi-hour game marathons without cramping.</p>
                         </div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">♨️</span>
                         <div>
-                            <h4 class="font-bold">Hot Tub</h4>
-                            <p class="text-stone-400 text-sm">Essential for late-night vibes and recovery.</p>
+                            <h4 class="font-bold text-stone-100">Hot Tub</h4>
+                            <p class="text-stone-400 text-xs mt-1 leading-relaxed">Essential for late-night post-gaming recovery and social hangs.</p>
                         </div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">🥩</span>
                         <div>
-                            <h4 class="font-bold">BBQ Grill</h4>
-                            <p class="text-stone-400 text-sm">For the Friday House Party kickoff.</p>
+                            <h4 class="font-bold text-stone-100">BBQ Grill</h4>
+                            <p class="text-stone-400 text-xs mt-1 leading-relaxed">Must-have for the Friday House Party kickoff and large-scale meal prep.</p>
                         </div>
                     </div>
                     <div class="flex items-start">
                         <span class="text-2xl mr-4">🧖</span>
                         <div>
-                            <h4 class="font-bold">Sauna or Steam Room</h4>
-                            <p class="text-stone-400 text-sm">High priority for the stay-in "Sauna Culture" sessions.</p>
+                            <h4 class="font-bold text-stone-100">Sauna / Steam</h4>
+                            <p class="text-stone-400 text-xs mt-1 leading-relaxed">High priority for the "Elite Home Base" wellness and recovery experience.</p>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-6">
-                <div class="flex space-x-2 overflow-x-auto pb-2 border-b border-stone-200 hide-scrollbar" id="activity-filters">
-                    <button class="px-4 py-2 font-medium tab-active transition whitespace-nowrap" data-filter="all">All Activities</button>
-                    <button class="px-4 py-2 font-medium tab-inactive transition whitespace-nowrap" data-filter="staying-in">🎲 Game Library</button>
-                    <button class="px-4 py-2 font-medium tab-inactive transition whitespace-nowrap" data-filter="traditions">🍵 Traditions</button>
-                    <button class="px-4 py-2 font-medium tab-inactive transition whitespace-nowrap" data-filter="outings">🚗 Cabin Fever</button>
+            <!-- Activity Filters -->
+            <div class="mb-8">
+                <div class="flex space-x-3 overflow-x-auto pb-4 hide-scrollbar" id="activity-filters">
+                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-active transition whitespace-nowrap" data-filter="all">All Items</button>
+                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-inactive transition whitespace-nowrap" data-filter="staying-in">🎲 Game Library</button>
+                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-inactive transition whitespace-nowrap" data-filter="traditions">🔥 Traditions</button>
+                    <button class="px-6 py-2 rounded-full border border-stone-200 font-medium tab-inactive transition whitespace-nowrap" data-filter="outings">🚗 Cabin Fever</button>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 pb-20" id="activity-grid">
+            <!-- Interactive Activity Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pb-20" id="activity-grid">
                 
-                <!-- Nintendo Switch -->
                 <div class="activity-card-container staying-in" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">Game Library</span>
-                            <div class="text-2xl mb-2">🎮</div>
-                            <h4 class="text-lg font-bold">Nintendo Switch</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2">Game Library</span>
+                            <div class="text-3xl mb-3">🎮</div>
+                            <h4 class="text-lg font-extrabold">Nintendo Switch</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-blue-50">
-                            <p class="text-sm text-blue-900">Console + Smash, Mario Kart, and Mario Party for the TV. Bring your controllers!</p>
+                            <p class="text-sm text-blue-900 leading-relaxed font-medium">Console + Smash Bros, Mario Kart, and Mario Party for the big screen. Bring your extra controllers!</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Board Games -->
                 <div class="activity-card-container staying-in" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">Game Library</span>
-                            <div class="text-2xl mb-2">🎲</div>
-                            <h4 class="text-lg font-bold">Board Games</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2">Game Library</span>
+                            <div class="text-3xl mb-3">🎲</div>
+                            <h4 class="text-lg font-extrabold">Board Games</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-blue-50">
-                            <p class="text-sm text-blue-900">Catan, 7 Wonders, Codenames (8-player friendly!), and Coup. Strategy mode: ON.</p>
+                            <p class="text-sm text-blue-900 leading-relaxed font-medium">The house staples: Catan, 7 Wonders, Codenames (ideal for our group!), and Coup. Strategy is mandatory.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Jackbox -->
                 <div class="activity-card-container staying-in" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-blue-600 mb-2">Game Library</span>
-                            <div class="text-2xl mb-2">📱</div>
-                            <h4 class="text-lg font-bold">Jackbox & Party</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-blue-600 mb-2">Game Library</span>
+                            <div class="text-3xl mb-3">📱</div>
+                            <h4 class="text-lg font-extrabold">Jackbox & Party</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-blue-50">
-                            <p class="text-sm text-blue-900">Everyone's phones are the controllers. Beer Die and Pong also ready for outdoor hours.</p>
+                            <p class="text-sm text-blue-900 leading-relaxed font-medium">Phones as controllers for Quiplash and Trivia Murder Party. Beer Die and Pong ready for house hours.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- House Party -->
                 <div class="activity-card-container traditions" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2">Tradition</span>
-                            <div class="text-2xl mb-2">🔥</div>
-                            <h4 class="text-lg font-bold">House Party</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-2">Tradition</span>
+                            <div class="text-3xl mb-3">🍻</div>
+                            <h4 class="text-lg font-extrabold">House Party</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-amber-50">
-                            <p class="text-sm text-amber-900">Friday kickoff. Drinks + BBQ at the house to start the weekend right with the squad.</p>
+                            <p class="text-sm text-amber-900 leading-relaxed font-medium">Friday kickoff event. Full spread of BBQ and drinks at the house. This party sets the energy level for the weekend.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Breakfast -->
                 <div class="activity-card-container traditions" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-amber-600 mb-2">Tradition</span>
-                            <div class="text-2xl mb-2">🍳</div>
-                            <h4 class="text-lg font-bold">Breakfast</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-amber-600 mb-2">Tradition</span>
+                            <div class="text-3xl mb-3">🍳</div>
+                            <h4 class="text-lg font-extrabold">Breakfast</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-amber-50">
-                            <p class="text-sm text-amber-900">Slow mornings at the house with a full breakfast spread, high-quality coffee, and game prep.</p>
+                            <p class="text-sm text-amber-900 leading-relaxed font-medium">Slow mornings with a massive breakfast spread and gameplay strategy sessions before the day starts.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- ATV & Shooting -->
                 <div class="activity-card-container outings" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2">Cabin Fever</span>
-                            <div class="text-2xl mb-2">🚜</div>
-                            <h4 class="text-lg font-bold">ATV & Shooting</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-2">Cabin Fever</span>
+                            <div class="text-3xl mb-3">🚜</div>
+                            <h4 class="text-lg font-extrabold">ATV & Shooting</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-emerald-50">
-                            <p class="text-sm text-emerald-900">Adrenaline break: Hitting the trails and the shooting range for target practice or clay pigeons.</p>
+                            <p class="text-sm text-emerald-900 leading-relaxed font-medium">High adrenaline: Hitting off-road mountain trails followed by a range session for target practice.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Brewery Winery -->
                 <div class="activity-card-container outings" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2">Cabin Fever</span>
-                            <div class="text-2xl mb-2">🍷</div>
-                            <h4 class="text-lg font-bold">Brewery & Winery</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-2">Cabin Fever</span>
+                            <div class="text-3xl mb-3">🍷</div>
+                            <h4 class="text-lg font-extrabold">Brewery & Winery</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-emerald-50">
-                            <p class="text-sm text-emerald-900">Exploring the best local hops and grapes in the area. A relaxed vibe for a sunny afternoon.</p>
+                            <p class="text-sm text-emerald-900 leading-relaxed font-medium">Checking out local hops and vines. A relaxed afternoon transition before the night begins.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Night Out -->
                 <div class="activity-card-container outings" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2">Cabin Fever</span>
-                            <div class="text-2xl mb-2">🕺</div>
-                            <h4 class="text-lg font-bold">Big Night Out</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-2">Cabin Fever</span>
+                            <div class="text-3xl mb-3">🕺</div>
+                            <h4 class="text-lg font-extrabold">Big Night Out</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-emerald-50">
-                            <p class="text-sm text-emerald-900">One nice dinner + Bottle Service. Time to suit up.</p>
+                            <p class="text-sm text-emerald-900 leading-relaxed font-medium">The main event: One premium sit-down dinner. Dress sharp and ready for the Tahoe/SLO night.</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Karaoke Hiking -->
                 <div class="activity-card-container outings" onclick="this.querySelector('.card-inner').classList.toggle('flipped')">
                     <div class="card-inner">
-                        <div class="card-front bg-white">
-                            <span class="text-xs font-bold uppercase tracking-wider text-emerald-600 mb-2">Cabin Fever</span>
-                            <div class="text-2xl mb-2">🎤</div>
-                            <h4 class="text-lg font-bold">Karaoke & Hiking</h4>
-                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-4">Tap for Details 🔄</span>
+                        <div class="card-front bg-white text-center">
+                            <span class="text-[10px] font-bold uppercase tracking-widest text-emerald-600 mb-2">Cabin Fever</span>
+                            <div class="text-3xl mb-3">🎤</div>
+                            <h4 class="text-lg font-extrabold">Karaoke & Hiking</h4>
+                            <span class="text-[10px] uppercase tracking-widest text-stone-300 mt-6">Tap Details 🔄</span>
                         </div>
                         <div class="card-back bg-emerald-50">
-                            <p class="text-sm text-emerald-900">Private room singing for those who didn't lose their voice. Morning hike to reset the system.</p>
+                            <p class="text-sm text-emerald-900 leading-relaxed font-medium">A high-energy private room singing session paired with a morning hike to reset the system.</p>
                         </div>
                     </div>
                 </div>
@@ -462,89 +510,85 @@
 
     </main>
 
-    <footer class="bg-stone-900 text-stone-400 py-8 text-center text-sm">
-        <p>Kelmen's Bachelor Blueprint | Digital Itinerary</p>
-        <p class="mt-2 text-stone-500">8 People. Lock the house. Game check. Send invites (Mid-May).</p>
+    <footer class="bg-stone-900 text-stone-400 py-12 text-center text-sm border-t border-stone-800">
+        <div class="max-w-6xl mx-auto px-4">
+            <p class="font-bold text-stone-200 tracking-wide uppercase text-xs">Kelmen's Bachelor Blueprint | Summer 2026</p>
+            <p class="mt-4 max-w-md mx-auto text-stone-500 leading-relaxed">7 People. Elite House. Planners: Lock the pad by May. Send digital invites mid-May.</p>
+        </div>
     </footer>
 
     <script>
         const targetDate = new Date("July 31, 2026 15:00:00").getTime();
-        
         function updateCountdown() {
             const now = new Date().getTime();
             const distance = targetDate - now;
-
             if (distance < 0) {
-                document.getElementById("cd-days").innerText = "00";
-                document.getElementById("cd-hours").innerText = "00";
-                document.getElementById("cd-mins").innerText = "00";
-                document.getElementById("cd-secs").innerText = "00";
+                document.querySelectorAll("[id^='cd-']").forEach(el => el.innerText = "00");
                 return;
             }
-
             const days = Math.floor(distance / (1000 * 60 * 60 * 24));
             const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((distance % (1000 * 60)) / 1000);
-
             document.getElementById("cd-days").innerText = days.toString().padStart(2, '0');
             document.getElementById("cd-hours").innerText = hours.toString().padStart(2, '0');
             document.getElementById("cd-mins").innerText = minutes.toString().padStart(2, '0');
             document.getElementById("cd-secs").innerText = seconds.toString().padStart(2, '0');
         }
-        
         setInterval(updateCountdown, 1000);
         updateCountdown();
 
         const ctx = document.getElementById('budgetChart').getContext('2d');
-        new Chart(ctx, {
+        const budgetChart = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Lodging ($350)', 'Spend/Food ($600)'],
+                labels: ['Lodging', 'Spend/Food'],
                 datasets: [{
                     data: [350, 600],
                     backgroundColor: ['#d97706', '#1f2937'],
                     borderWidth: 0,
-                    hoverOffset: 4
+                    hoverOffset: 15
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
-                cutout: '70%',
+                cutout: '75%',
+                layout: { padding: 10 },
                 plugins: {
-                    legend: {
-                        position: 'bottom',
-                        labels: {
-                            font: { family: "'Outfit', sans-serif" },
-                            padding: 20
-                        }
-                    },
-                    tooltip: {
-                        backgroundColor: '#1f2937',
-                        titleFont: { family: "'Outfit', sans-serif" },
-                        bodyFont: { family: "'Outfit', sans-serif" },
-                        padding: 12,
-                        cornerRadius: 8
-                    }
+                    legend: { display: true, position: 'bottom', labels: { font: { family: "'Outfit', sans-serif" }, usePointStyle: true } },
+                    tooltip: { backgroundColor: '#1f2937', padding: 15, cornerRadius: 12 }
                 }
             }
         });
 
+        function updateBudget() {
+            const lodging = parseInt(document.getElementById('lodging-slider').value);
+            const spend = parseInt(document.getElementById('spend-slider').value);
+            const total = lodging + spend;
+            const groupTotal = lodging * 7;
+
+            document.getElementById('lodging-val').innerText = lodging;
+            document.getElementById('spend-val').innerText = spend;
+            document.getElementById('budget-total').innerText = total;
+            document.getElementById('lodging-total-calc').innerText = groupTotal;
+
+            budgetChart.data.datasets[0].data = [lodging, spend];
+            budgetChart.update();
+        }
+
+        document.getElementById('lodging-slider').addEventListener('input', updateBudget);
+        document.getElementById('spend-slider').addEventListener('input', updateBudget);
+
         const filterBtns = document.querySelectorAll('#activity-filters button');
         const activityCards = document.querySelectorAll('.activity-card-container');
-
         filterBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                filterBtns.forEach(b => {
-                    b.classList.remove('tab-active');
-                    b.classList.add('tab-inactive');
-                });
-                btn.classList.remove('tab-inactive');
-                btn.classList.add('tab-active');
-
+                filterBtns.forEach(b => b.classList.remove('tab-active', 'bg-stone-900', 'text-white'));
+                filterBtns.forEach(b => b.classList.add('tab-inactive', 'bg-transparent', 'text-stone-600'));
+                btn.classList.remove('tab-inactive', 'text-stone-600');
+                btn.classList.add('tab-active', 'bg-stone-900', 'text-white');
                 const filter = btn.getAttribute('data-filter');
-
                 activityCards.forEach(card => {
                     if (filter === 'all' || card.classList.contains(filter)) {
                         card.classList.remove('hide');
@@ -555,6 +599,11 @@
             });
         });
 
+        document.querySelectorAll('.card-inner, .activity-card-container .card-inner').forEach(inner => {
+            inner.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A') e.stopPropagation();
+            });
+        });
     </script>
 </body>
 </html>
